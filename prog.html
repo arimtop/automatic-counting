@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учёт изделий на предприятии</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="./media/favicon.ico" type="icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.6.0/css/all.css">
+</head>
+<body>
+
+
+<header id="header">
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+            <h1 class="text-center text-black p-3">Учёт изделий на предприятии</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="section mt-5">
+    <div class="row"  id="zagolovok3"  style="background: linear-gradient(to right, #bcb3d0 0%, #06B6D4 100%);">
+        <div class="col-4 text-uppercase mt-3 mb-3"><h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(32, 236, 32); border: 1px solid black; border-radius: 50%; background-color: black;"></i> приёмка</h2></div>
+        <div class="col-8 text-uppercase mt-3 mb-3"><h2 class="history text-center"><i class="fa-solid fa-clock-rotate-left" style="color: rgb(94, 95, 94); "></i> перечень товаров</h2></div>
+    </div>
+    <div class="row m-0 base">
+        <div class="col-4" style="border-right: 3px solid var(--color3);">
+            <form>
+
+                <div class="form-group">
+                            <label for="productName"><i class="fas fa-tag" style="color: red;"></i> Название изделия</label>
+                            <input type="" id="productName" required placeholder="Введите название">
+                </div>
+
+                <div class="form-group">
+                            <label for="productCode"><i class="fas fa-barcode"></i> Код изделия</label>
+                            <input type="text" id="productCode" required placeholder="Уникальный код">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productCategory"><i class="fas fa-folder" style="color: rgb(0, 120, 215);"></i> Категория</label>
+                            <select id="productCategory" required>
+                                <option value="">Выберите категорию</option>
+                                <option value="Электроника">Электроника</option>
+                                <option value="Мебель">Мебель</option>
+                                <option value="Одежда">Одежда</option>
+                                <option value="Инструменты">Инструменты</option>
+                                <option value="Книги">Книги</option>
+                                <option value="Еда">Еда</option>
+                                <option value="Другое">Другое</option>
+                            </select>
+                            
+                        </div>
+
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="productQuantity"><i class="fas fa-cubes" style="color: brown;"></i> Количество</label>
+                                <input type="number" id="productQuantity" min="0" value="1" required>
+                            </div>
+
+                            <div class="form-group half">
+                                <label for="productPrice"><i class="fas fa-ruble-sign"></i> Цена (руб.)</label>
+                                <input type="number" id="productPrice" min="0" step="0.01" required>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="productDescription"><i class="fas fa-align-left"></i> Описание</label>
+                            <textarea id="productDescription" rows="3" placeholder="Описание изделия"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productLocation"><i class="fas fa-map-marker-alt" style="color: red;"></i> Место хранения</label>
+                            <input type="text" id="productLocation" placeholder="Расположение">
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt" style="color: forestgreen;"></i> Дата поступления</label>
+                            <input type="date" id="productDate" required>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Сохранить изделие
+                            </button>
+
+                            <button type="reset" id="clearForm" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Очистить форму
+                            </button>
+
+                        </div>
+
+
+
+
+
+
+
+
+
+                        
+
+
+            </form>
+        </div>
+        <div class="col-8 mt-3"> <div class="right-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list"></i> Список изделий</h2>
+                        <div class="controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Поиск изделий...">
+                            </div>
+                            <select id="categoryFilter">
+                                <option value="">Все категории</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="productsTable">
+                           
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-barcode" style="color: black;"></i> Код</th>
+                                    <th><i class="fas fa-tag" style="color: red;"></i> Название</th>
+                                    <th><i class="fas fa-folder" style="color: yellow;"></i> Категория</th>
+                                    <th><i class="fas fa-cubes" style="color: brown;"></i> Кол-во</th>
+                                    <th><i class="fas fa-ruble-sign" style="color: black;"></i> Цена</th>
+                                    <th><i class="fa-solid fa-wallet" style="color: lightgreen;"></i> Стоимость</th>
+                                    <th><i class="fa-regular fa-hand" style="color: burlywood;"></i> Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsList">
+                                <!-- Список изделий будет здесь -->
+                                
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="summary">
+                            <strong>Итого:</strong>
+                            <span id="summaryQuantity">0</span> шт. изделий на сумму 
+                            <span id="summaryValue">0</span> руб.
+                        </div>
+                        <div class="pagination">
+                            <button id="prevPage" class="btn-pagination"><i class="fas fa-chevron-left"></i></button>
+                            <span id="pageInfo">Страница 1</span>
+                            <button id="nextPage" class="btn-pagination"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+    </div>
+
+</div>
+
+
+<div class="row m-0">
+    <div class="col-9 mt-5 m-auto">
+       <div class="card stats mb-0">
+                    <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalProducts">0</div>
+                            <div class="stat-label">Всего изделий</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalQuantity">0</div>
+                            <div class="stat-label">Общее количество</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalValue">0</div>
+                            <div class="stat-label">Общая стоимость</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="categoriesCount">0</div>
+                            <div class="stat-label">Категорий</div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+            <button onclick="exportToCSV()" class="btn btn-sm btn-outline-success">
+                <i class="fas fa-file-csv"></i> Экспорт CSV
+            </button>
+            <button onclick="clearAllData()" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-trash-alt"></i> Очистить всё
+            </button>
+        </div>
+                </div>
+            </div> 
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<footer id="footer" class="footer mt-5">
+    
+        <h4 class="text-center mb-5"><i class="fas fa-graduation-cap"></i> Курсовой проект</h4>
+        
+        <div class="row m-0">
+            <div class="col-6">
+            <h5>Тема работы:</h5>
+            <p>"Разработка программы автоматизации учёта изделий на предприятии"</p>
+            </div>
+
+            <div class="col-6">
+                <h5>Технологии:</h5>
+                <ul>
+                    <li>HTML5, CSS3, JavaScript</li>
+                    <li>Bootstrap 5 для адаптивного дизайна</li>
+                    <li>LocalStorage для хранения данных</li>
+                </ul>
+            </div>
+            
+        </div>
+
+        <div class="row m-0 mt-3">
+            <div class="col-6">
+                 <h5>Выполнил:</h5>
+                <p>Студент группы 322-П<br>
+                   Дубровин Никита Романович<br>
+                   Специальности 09.02.07 "Информационные системы и прораммирование"</p>
+            </div>
+
+            <div class="col-6">
+                <h5>Функционал:</h5>
+                <ul>
+                    <li>CRUD операции с изделиями</li>
+                    <li>Поиск и фильтрация</li>
+                    <li>Адаптивный дизайн</li>
+                </ul>
+            </div>
+        </div>
+
+         
+        <div class="row mt-3 m-0">
+            <div class="contacts col-12 text-center">
+                <hr>
+                <p class="mb-1">Дата защиты: 19.02.2026 - 21.02.2026</p>
+                <p>Ожидаемая оценка: 5</p>
+            </div>
+        </div>
+     
+</footer>
+
+
+
+
+
+
+
+<script src="./js/bootstrap.bundle.min.js"></script> 
+   <script src="./js/javascript.js"></script>
+</body>
+</html>
