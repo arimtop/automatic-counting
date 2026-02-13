@@ -16,7 +16,7 @@
 <header id="header">
     <div class="container mt-3">
         <div class="row">
-            <div class="col-12">
+            <div class="col-sm-12">
             <h1 class="text-center text-black p-3">Учёт изделий на предприятии</h1>
             </div>
         </div>
@@ -26,7 +26,7 @@
 
 <div class="section mt-5">
     <div class="row"  id="zagolovok3"  style="background: linear-gradient(to right, #bcb3d0 0%, #06B6D4 100%);">
-        <div class="col-4 text-uppercase mt-3 mb-3"><h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(32, 236, 32); border: 1px solid black; border-radius: 50%; background-color: black;"></i> приёмка</h2></div>
+        <div class="col-4 text-uppercase mt-3 mb-3"><h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(32, 236, 32); border: 1px solid black; border-radius: 50%; background-color: black;"></i> добавить</h2></div>
         <div class="col-8 text-uppercase mt-3 mb-3"><h2 class="history text-center"><i class="fa-solid fa-clock-rotate-left" style="color: rgb(94, 95, 94); "></i> перечень товаров</h2></div>
     </div>
     <div class="row m-0 base">
@@ -45,15 +45,10 @@
 
                         <div class="form-group">
                             <label for="productCategory"><i class="fas fa-folder" style="color: rgb(0, 120, 215);"></i> Категория</label>
+                            <i class="fa-regular fa-calendar-plus categoriesAdd" onclick="newCategories()"></i>
                             <select id="productCategory" required>
                                 <option value="">Выберите категорию</option>
-                                <option value="Электроника">Электроника</option>
-                                <option value="Мебель">Мебель</option>
-                                <option value="Одежда">Одежда</option>
-                                <option value="Инструменты">Инструменты</option>
-                                <option value="Книги">Книги</option>
-                                <option value="Еда">Еда</option>
-                                <option value="Другое">Другое</option>
+                                
                             </select>
                             
                         </div>
@@ -227,12 +222,12 @@
         <h4 class="text-center mb-5"><i class="fas fa-graduation-cap"></i> Курсовой проект</h4>
         
         <div class="row m-0">
-            <div class="col-6">
+            <div class="col-sm-6">
             <h5>Тема работы:</h5>
             <p>"Разработка программы автоматизации учёта изделий на предприятии"</p>
             </div>
 
-            <div class="col-6">
+            <div class="col-sm-6">
                 <h5>Технологии:</h5>
                 <ul>
                     <li>HTML5, CSS3, JavaScript</li>
@@ -244,14 +239,14 @@
         </div>
 
         <div class="row m-0 mt-3">
-            <div class="col-6">
+            <div class="col-sm-6">
                  <h5>Выполнил:</h5>
                 <p>Студент группы 322-П<br>
                    Дубровин Никита Романович<br>
                    Специальности 09.02.07 "Информационные системы и прораммирование"</p>
             </div>
 
-            <div class="col-6">
+            <div class="col-sm-6">
                 <h5>Функционал:</h5>
                 <ul>
                     <li>CRUD операции с изделиями</li>
@@ -263,7 +258,7 @@
 
          
         <div class="row mt-3 m-0">
-            <div class="contacts col-12 text-center">
+            <div class="contacts col-sm-12 text-center">
                 <hr>
                 <p class="mb-1">Дата защиты: 19.02.2026 - 21.02.2026</p>
                 <p>Ожидаемая оценка: 5</p>

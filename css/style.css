@@ -177,6 +177,18 @@ body {
     background: white;
 }
 
+.categoriesAdd {
+    color: rgb(32, 32, 253);
+    cursor: pointer;
+    padding: 3px;
+    transition: ease-in-out 0.3s;
+}
+
+.categoriesAdd:hover {
+    transform: translateX(5px);
+    color: blue;
+}
+
 .table-container {
     overflow-x: auto;
     border-radius: 2px;

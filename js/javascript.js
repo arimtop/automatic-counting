@@ -8,6 +8,7 @@ let currentCategory = '';
 // DOM элементы
 const productForm = document.querySelector('form');
 const searchInput = document.getElementById('searchInput');
+const productCategory = document.getElementById('productCategory');
 const categoryFilter = document.getElementById('categoryFilter');
 const productsList = document.getElementById('productsList');
 const summaryQuantity = document.getElementById('summaryQuantity');
@@ -92,6 +93,11 @@ function initCategories() {
             option.value = product.category;
             option.textContent = product.category;
             filterSelect.appendChild(option);
+
+            const formOption = document.createElement('option');
+            formOption.value = product.category;
+            formOption.textContent = product.category;
+            categorySelect.appendChild(formOption);
         }
     });
 }
@@ -271,6 +277,33 @@ function updateStats() {
     totalQuantityEl.textContent = spaceDigits(totalQuantity);
     totalValueEl.textContent = spaceDigits(totalValue.toFixed(2));
     categoriesCountEl.textContent = spaceDigits(uniqueCategories.length);
+}
+
+function newCategories() {
+    let newCategory = prompt('Введите название новой категории:');
+    if (newCategory && newCategory.trim() !== '') {
+        newCategory = newCategory.trim();
+        
+        // Проверяем, существует ли уже такая категория
+        const existingOptions = Array.from(productCategory.options).map(opt => opt.value);
+        if (!existingOptions.includes(newCategory)) {
+            // Добавляем в select формы
+            const opt = document.createElement("option");
+            opt.value = newCategory;
+            opt.text = newCategory;
+            productCategory.add(opt, productCategory.options[1]);
+            
+            // Добавляем в select фильтра
+            const filterOpt = document.createElement("option");
+            filterOpt.value = newCategory;
+            filterOpt.text = newCategory;
+            categoryFilter.add(filterOpt, categoryFilter.options[1]);
+            
+            showNotification(`Категория "${newCategory}" добавлена!`, 'success');
+        } else {
+            showNotification('Такая категория уже существует!', 'error');
+        }
+    }
 }
 
 // Функция для экспорта в CSV
