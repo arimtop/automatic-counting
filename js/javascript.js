@@ -31,10 +31,8 @@ document.getElementById("productDate").valueAsDate = new Date();
 function spaceDigits(number) {
   if (number === null || number === undefined) return "0";
 
-  // Преобразуем в строку и убираем существующие пробелы
   let numStr = String(number).replace(/\s/g, "");
 
-  // Если это число с десятичной частью
   if (numStr.includes(".")) {
     const parts = numStr.split(".");
     const integerPart = parts[0].replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, "$1 ");
@@ -42,16 +40,13 @@ function spaceDigits(number) {
     return `${integerPart}.${decimalPart}`;
   }
 
-  // Целое число
   return numStr.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, "$1 ");
 }
 
 // Функция для отображения уведомлений
 function showNotification(message, type = "info") {
-  // Удаляем старые уведомления
   document.querySelectorAll(".notification").forEach((n) => n.remove());
 
-  // Создаем элемент уведомления
   const notification = document.createElement("div");
   notification.className = `notification notification-${type}`;
   notification.innerHTML = `
@@ -59,18 +54,8 @@ function showNotification(message, type = "info") {
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
 
-  // Добавляем стили, если их нет
-  if (!document.querySelector("#notification-styles")) {
-    const styles = document.createElement("style");
-    styles.id = "notification-styles";
-
-    document.head.appendChild(styles);
-  }
-
-  // Добавляем на страницу
   document.body.appendChild(notification);
 
-  // Автоматическое удаление через 3 секунды
   setTimeout(() => {
     if (notification.parentElement) {
       notification.remove();
@@ -78,37 +63,131 @@ function showNotification(message, type = "info") {
   }, 3000);
 }
 
-// Инициализация категорий в фильтре
+// ОБНОВЛЕННАЯ ФУНКЦИЯ: Инициализация категорий в фильтре и форме (без дубликатов)
 function initCategories() {
   const categorySelect = document.getElementById("productCategory");
   const filterSelect = document.getElementById("categoryFilter");
 
-  // Сохраняем существующие опции
-  const existingOptions = Array.from(filterSelect.options).map(
-    (opt) => opt.value,
-  );
+  // Сохраняем текущие выбранные значения
+  const currentFormValue = categorySelect.value;
+  const currentFilterValue = filterSelect.value;
 
-  // Добавляем новые категории из продуктов
-  products.forEach((product) => {
-    if (product.category && !existingOptions.includes(product.category)) {
-      const option = document.createElement("option");
-      option.value = product.category;
-      option.textContent = product.category;
-      filterSelect.appendChild(option);
+  // Получаем уникальные категории из всех продуктов
+  const uniqueCategories = [
+    ...new Set(products.map((product) => product.category)),
+  ];
 
-      const formOption = document.createElement("option");
-      formOption.value = product.category;
-      formOption.textContent = product.category;
-      categorySelect.appendChild(formOption);
+  // Добавляем категории из продуктов, которых нет в списке
+  uniqueCategories.forEach((category) => {
+    if (category && category.trim() !== "") {
+      // Проверяем, есть ли уже такая опция в form select
+      let formExists = false;
+      for (let i = 0; i < categorySelect.options.length; i++) {
+        if (categorySelect.options[i].value === category) {
+          formExists = true;
+          break;
+        }
+      }
+
+      // Если нет, добавляем
+      if (!formExists) {
+        const formOption = document.createElement("option");
+        formOption.value = category;
+        formOption.textContent = category;
+        categorySelect.appendChild(formOption);
+      }
+
+      // Проверяем, есть ли уже такая опция в filter select
+      let filterExists = false;
+      for (let i = 0; i < filterSelect.options.length; i++) {
+        if (filterSelect.options[i].value === category) {
+          filterExists = true;
+          break;
+        }
+      }
+
+      // Если нет, добавляем
+      if (!filterExists) {
+        const filterOption = document.createElement("option");
+        filterOption.value = category;
+        filterOption.textContent = category;
+        filterSelect.appendChild(filterOption);
+      }
     }
   });
+
+  // Восстанавливаем выбранные значения
+  if (currentFormValue && uniqueCategories.includes(currentFormValue)) {
+    categorySelect.value = currentFormValue;
+  }
+
+  if (currentFilterValue && uniqueCategories.includes(currentFilterValue)) {
+    filterSelect.value = currentFilterValue;
+  } else if (currentFilterValue === "") {
+    filterSelect.value = "";
+  }
 }
 
-// Сохранение в LocalStorage
+// НОВАЯ ФУНКЦИЯ: Обновление списка категорий (полная перезапись)
+function refreshCategories() {
+  const categorySelect = document.getElementById("productCategory");
+  const filterSelect = document.getElementById("categoryFilter");
+
+  // Сохраняем текущие выбранные значения
+  const currentFormValue = categorySelect.value;
+  const currentFilterValue = filterSelect.value;
+
+  // Очищаем оба select, оставляя только первый option (по умолчанию)
+  while (categorySelect.options.length > 1) {
+    categorySelect.remove(1);
+  }
+
+  while (filterSelect.options.length > 1) {
+    filterSelect.remove(1);
+  }
+
+  // Получаем уникальные категории из всех продуктов
+  const uniqueCategories = [
+    ...new Set(products.map((product) => product.category)),
+  ];
+
+  // Сортируем категории по алфавиту
+  uniqueCategories.sort((a, b) => a.localeCompare(b, "ru"));
+
+  // Добавляем категории в оба select
+  uniqueCategories.forEach((category) => {
+    if (category && category.trim() !== "") {
+      // Добавляем в form select
+      const formOption = document.createElement("option");
+      formOption.value = category;
+      formOption.textContent = category;
+      categorySelect.appendChild(formOption);
+
+      // Добавляем в filter select
+      const filterOption = document.createElement("option");
+      filterOption.value = category;
+      filterOption.textContent = category;
+      filterSelect.appendChild(filterOption);
+    }
+  });
+
+  // Восстанавливаем выбранные значения
+  if (currentFormValue && uniqueCategories.includes(currentFormValue)) {
+    categorySelect.value = currentFormValue;
+  }
+
+  if (currentFilterValue && uniqueCategories.includes(currentFilterValue)) {
+    filterSelect.value = currentFilterValue;
+  } else {
+    filterSelect.value = "";
+  }
+}
+
+// Сохранение в LocalStorage (обновленная)
 function saveToLocalStorage() {
   localStorage.setItem("products", JSON.stringify(products));
   updateStats();
-  initCategories();
+  refreshCategories(); // Используем полное обновление вместо initCategories
 }
 
 // Добавление продукта
@@ -193,7 +272,8 @@ function renderProducts() {
       (product) =>
         product.name.toLowerCase().includes(searchLower) ||
         product.code.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower),
+        (product.description &&
+          product.description.toLowerCase().includes(searchLower)),
     );
   }
 
@@ -288,29 +368,59 @@ function updateStats() {
   categoriesCountEl.textContent = spaceDigits(uniqueCategories.length);
 }
 
+// ОБНОВЛЕННАЯ ФУНКЦИЯ: Добавление новой категории через иконку
 function newCategories() {
   let newCategory = prompt("Введите название новой категории:");
   if (newCategory && newCategory.trim() !== "") {
     newCategory = newCategory.trim();
 
+    // Получаем текущие уникальные категории из продуктов
+    const existingCategories = [...new Set(products.map((p) => p.category))];
+
     // Проверяем, существует ли уже такая категория
-    const existingOptions = Array.from(productCategory.options).map(
-      (opt) => opt.value,
-    );
-    if (!existingOptions.includes(newCategory)) {
-      // Добавляем в select формы
-      const opt = document.createElement("option");
-      opt.value = newCategory;
-      opt.text = newCategory;
-      productCategory.add(opt, productCategory.options[1]);
+    if (!existingCategories.includes(newCategory)) {
+      // Добавляем категорию в products (создаём временный продукт?)
+      // Или просто добавляем опцию в select без создания продукта?
 
-      // Добавляем в select фильтра
-      const filterOpt = document.createElement("option");
-      filterOpt.value = newCategory;
-      filterOpt.text = newCategory;
-      categoryFilter.add(filterOpt, categoryFilter.options[1]);
+      // Вариант 1: Добавляем опцию напрямую (без создания продукта)
+      const categorySelect = document.getElementById("productCategory");
+      const filterSelect = document.getElementById("categoryFilter");
 
-      showNotification(`Категория "${newCategory}" добавлена!`, "success");
+      // Проверяем, нет ли уже такой опции в select
+      let formExists = false;
+      for (let i = 0; i < categorySelect.options.length; i++) {
+        if (categorySelect.options[i].value === newCategory) {
+          formExists = true;
+          break;
+        }
+      }
+
+      if (!formExists) {
+        const formOption = document.createElement("option");
+        formOption.value = newCategory;
+        formOption.textContent = newCategory;
+        categorySelect.appendChild(formOption);
+      }
+
+      let filterExists = false;
+      for (let i = 0; i < filterSelect.options.length; i++) {
+        if (filterSelect.options[i].value === newCategory) {
+          filterExists = true;
+          break;
+        }
+      }
+
+      if (!filterExists) {
+        const filterOption = document.createElement("option");
+        filterOption.value = newCategory;
+        filterOption.textContent = newCategory;
+        filterSelect.appendChild(filterOption);
+      }
+
+      showNotification(
+        `Категория "${newCategory}" добавлена в список!`,
+        "success",
+      );
     } else {
       showNotification("Такая категория уже существует!", "error");
     }
@@ -324,16 +434,13 @@ function exportToCSV() {
     return;
   }
 
-  // Создаем заголовки CSV
   let csvContent =
     "Код;Название;Категория;Количество;Цена;Описание;Место хранения;Дата поступления\n";
 
-  // Добавляем данные
   products.forEach((product) => {
     csvContent += `"${product.code}";"${product.name}";"${product.category}";${product.quantity};${product.price};"${product.description || ""}";"${product.location || ""}";"${product.date}"\n`;
   });
 
-  // Создаем Blob и скачиваем файл
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
@@ -355,7 +462,7 @@ function exportToCSV() {
   );
 }
 
-// Функция для полного очищения данных
+// Функция для полного очищения данных (обновленная)
 function clearAllData() {
   if (products.length === 0) {
     showNotification("Нет данных для очистки", "info");
@@ -369,9 +476,20 @@ function clearAllData() {
   ) {
     products = [];
     localStorage.removeItem("products");
+
+    // Очищаем категории в select, оставляя только "Выберите категорию"
+    const categorySelect = document.getElementById("productCategory");
+    while (categorySelect.options.length > 1) {
+      categorySelect.remove(1);
+    }
+
+    const filterSelect = document.getElementById("categoryFilter");
+    while (filterSelect.options.length > 1) {
+      filterSelect.remove(1);
+    }
+
     renderProducts();
     updateStats();
-    initCategories();
     showNotification("Все данные успешно удалены", "warning");
   }
 }
@@ -380,6 +498,7 @@ function clearAllData() {
 function init() {
   // Назначаем обработчики событий
   productForm.addEventListener("submit", addProduct);
+
   searchInput.addEventListener("input", (e) => {
     currentFilter = e.target.value;
     currentPage = 1;
@@ -426,7 +545,7 @@ function init() {
   });
 
   // Инициализируем категории
-  initCategories();
+  refreshCategories();
 
   // Рендерим продукты
   renderProducts();
@@ -438,7 +557,7 @@ function init() {
   }
 }
 
-// Загрузка примеров данных
+// Загрузка примеров данных (обновленная)
 function loadSampleData() {
   const sampleProducts = [
     {
