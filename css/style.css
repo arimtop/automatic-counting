@@ -13,15 +13,25 @@ body {
   --color3: #52339a;
 }
 
+#header img {
+  transition: ease-in-out 1.5s;
+}
+
+#header img:hover {
+  rotate: 360deg;
+}
+
 .container {
   border: 5px solid var(--color3);
   border-radius: 20px;
-  background: linear-gradient(to right, #bcb3d0 0%, #06b6d4 100%);
+  background-image: url(../media/factory.jpg);
+  background-position: center;
 }
 
 .container h1 {
   font-family: ROMAN;
   font-size: 50px;
+  text-shadow: -2px -1px 0 white;
 }
 
 .section {
@@ -404,17 +414,114 @@ tbody tr:hover {
   line-height: 1;
 }
 
-
-
-
 .footer {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   color: #cbd5e1;
   border-radius: 10px 10px 0 0;
+  transition: ease 1s;
+  background-size: 1px 80px;
 }
 
-
+.footer:hover {
+  background-position: 40px;
+}
 
 .footer h4 {
   padding-top: 10px;
+}
+
+.footer {
+  background: linear-gradient(135deg, #1e293b, #2e4a70, #3b3f46);
+  background-size: 200% 200%;
+  animation: gradientMove 5s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  1% {
+    background-position: 2% 50%;
+  }
+  2% {
+    background-position: 4% 50%;
+  }
+  3% {
+    background-position: 6% 50%;
+  }
+  4% {
+    background-position: 8% 50%;
+  }
+  5% {
+    background-position: 10% 50%;
+  }
+  10% {
+    background-position: 20% 50%;
+  }
+  15% {
+    background-position: 30% 50%;
+  }
+  20% {
+    background-position: 40% 50%;
+  }
+  25% {
+    background-position: 50% 50%;
+  }
+  30% {
+    background-position: 60% 50%;
+  }
+  35% {
+    background-position: 70% 50%;
+  }
+  40% {
+    background-position: 80% 50%;
+  }
+  45% {
+    background-position: 90% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+
+  55% {
+    background-position: 90% 50%;
+  }
+  60% {
+    background-position: 80% 50%;
+  }
+  65% {
+    background-position: 70% 50%;
+  }
+  70% {
+    background-position: 60% 50%;
+  }
+  75% {
+    background-position: 50% 50%;
+  }
+  80% {
+    background-position: 40% 50%;
+  }
+  85% {
+    background-position: 30% 50%;
+  }
+  90% {
+    background-position: 20% 50%;
+  }
+  95% {
+    background-position: 10% 50%;
+  }
+  96% {
+    background-position: 8% 50%;
+  }
+  97% {
+    background-position: 6% 50%;
+  }
+  98% {
+    background-position: 4% 50%;
+  }
+  99% {
+    background-position: 2% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
