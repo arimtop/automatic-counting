@@ -7,12 +7,6 @@ body {
   background-color: #90e0ef;
 }
 
-:root {
-  --color1: #eee;
-  --color2: #05b1b1;
-  --color3: #52339a;
-}
-
 #header img {
   transition: ease-in-out 1.5s;
 }
@@ -22,7 +16,7 @@ body {
 }
 
 .container {
-  border: 5px solid var(--color3);
+  border: 3px solid #0077b6;
   border-radius: 20px;
   background-image: url(../media/factory.jpg);
   background-position: center;
@@ -35,13 +29,13 @@ body {
 }
 
 .section {
-  border: 5px solid var(--color3);
+  border: 5px solid #0077b6;
   border-radius: 10px;
   margin: auto 15px;
 }
 
 #zagolovok3 {
-  border-bottom: 3px solid var(--color3);
+  border-bottom: 3px solid #0077b6;
   width: 100%;
   margin: auto;
 }
@@ -126,10 +120,14 @@ body {
   background: linear-gradient(to right, #bcb3d0 0%, #06b6d4 100%);
 }
 
+.left-panel {
+  border-right: 3px solid #0077b6;
+}
+
 .card {
   background: white;
   border-radius: 15px;
-  border: 2px solid var(--color3);
+  border: 2px solid #0077b6;
   padding: 25px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   margin-bottom: 25px;
@@ -176,14 +174,14 @@ body {
 .search-box input {
   padding: 10px 15px 10px 40px;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 20px;
   width: 250px;
 }
 
 #categoryFilter {
   padding: 10px 15px;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 20px;
   background: white;
 }
 
@@ -201,7 +199,10 @@ body {
 
 .table-container {
   overflow-x: auto;
+  overflow-y: auto;
   border-radius: 2px;
+  min-height: 650px;
+  max-height: 650px;
 }
 
 table {
@@ -322,9 +323,7 @@ tbody tr:hover {
 .btn-delete {
   border: none;
   border-radius: 6px;
-
   transition: all 0.3s;
-
   width: 36px;
   height: 36px;
 }
@@ -412,27 +411,6 @@ tbody tr:hover {
   padding: 0;
   margin-left: 10px;
   line-height: 1;
-}
-
-.footer {
-  color: #cbd5e1;
-  border-radius: 10px 10px 0 0;
-  transition: ease 1s;
-  background-size: 1px 80px;
-}
-
-.footer:hover {
-  background-position: 40px;
-}
-
-.footer h4 {
-  padding-top: 10px;
-}
-
-.footer {
-  background: linear-gradient(135deg, #1e293b, #2e4a70, #3b3f46);
-  background-size: 200% 200%;
-  animation: gradientMove 5s ease-in-out infinite;
 }
 
 @keyframes gradientMove {
@@ -524,4 +502,16 @@ tbody tr:hover {
   100% {
     background-position: 0% 50%;
   }
+}
+
+.footer {
+  color: #cbd5e1;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #1e293b, #2e4a70, #3b3f46);
+  background-size: 200% 200%;
+  animation: gradientMove 5s ease-in-out infinite;
+}
+
+.footer h4 {
+  padding-top: 10px;
 }
