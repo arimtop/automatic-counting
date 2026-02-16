@@ -40,10 +40,7 @@ body {
   margin: auto;
 }
 
-.vvod {
-  margin-top: 30px;
-  margin-left: 30px;
-}
+
 
 .form-group {
   margin-top: 25px;
@@ -186,15 +183,15 @@ body {
 }
 
 .categoriesAdd {
-  color: rgb(32, 32, 253);
   cursor: pointer;
-  padding: 3px;
   transition: ease-in-out 0.3s;
+  width: 25px;
 }
 
 .categoriesAdd:hover {
   transform: translateX(5px);
-  color: blue;
+  background-color: #0077b6;
+  border-radius: 50%;
 }
 
 .table-container {

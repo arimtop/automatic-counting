@@ -26,7 +26,7 @@
 
 <div class="section mt-5">
     <div class="row"  id="zagolovok3"  style="background: linear-gradient(to right, #bcb3d0 0%, #06B6D4 100%);">
-        <div class="col-4 text-uppercase mt-3 mb-3"><h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(32, 236, 32); border: 1px solid black; border-radius: 50%; background-color: black;"></i> добавить</h2></div>
+        <div class="col-4 text-uppercase mt-3 mb-3"><h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(0, 255, 42);"></i> добавить</h2></div>
         <div class="col-8 text-uppercase mt-3 mb-3"><h2 class="history text-center"><i class="fa-solid fa-clock-rotate-left" style="color: rgb(94, 95, 94); "></i> перечень товаров</h2></div>
     </div>
     <div class="row m-0 base">
@@ -45,7 +45,7 @@
 
                         <div class="form-group">
                             <label for="productCategory"><i class="fas fa-folder" style="color: rgb(0, 120, 215);"></i> Категория</label>
-                            <i class="fa-regular fa-calendar-plus categoriesAdd" onclick="newCategories()"></i>
+                           <img src="./media/plus.svg" alt="+" class="categoriesAdd" onclick="newCategories()">
                             <select id="productCategory" required>
                                 <option value="">Выберите категорию</option>
                                 
@@ -55,14 +55,14 @@
 
 
                         <div class="form-row">
-                            <div class="form-group half">
+                            <div class="form-group">
                                 <label for="productQuantity"><i class="fas fa-cubes" style="color: brown;"></i> Количество</label>
                                 <input type="number" id="productQuantity" min="0" value="1" required>
                             </div>
 
-                            <div class="form-group half">
+                            <div class="form-group">
                                 <label for="productPrice"><i class="fas fa-ruble-sign"></i> Цена (руб.)</label>
-                                <input type="number" id="productPrice" min="0" step="0.01" required>
+                                <input type="number" id="productPrice" min="0" step="0.1" required>
                             </div>
                         </div>
 
