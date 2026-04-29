@@ -29,7 +29,7 @@ body {
 }
 
 .section {
-  border: 5px solid #0077b6;
+  border: 3px solid #0077b6;
   border-radius: 10px;
   margin: auto 15px;
 }
@@ -39,8 +39,6 @@ body {
   width: 100%;
   margin: auto;
 }
-
-
 
 .form-group {
   margin-top: 25px;
@@ -121,6 +119,192 @@ body {
   border-right: 3px solid #0077b6;
 }
 
+.right-panel {
+  padding: 20px;
+}
+
+#writeOffForm .btn-primary {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+#writeOffForm .btn-primary:hover {
+  background: #b91c1c;
+  transform: translateY(-5px);
+}
+
+#selectedProductInfo .card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+#selectedProductInfo p {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Кастомный выпадающий список с поиском */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-bottom: 2px solid rgb(51, 210, 51);
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.3s;
+}
+
+.custom-select-trigger:hover {
+  border-color: rgb(51, 210, 51);
+}
+
+.custom-select-trigger i {
+  transition: transform 0.3s ease;
+}
+
+.custom-select.open .custom-select-trigger i {
+  transform: rotate(180deg);
+}
+
+.custom-select-placeholder {
+  color: #757575;
+  font-size: 16px;
+}
+
+.custom-select-placeholder.selected {
+  color: #000;
+}
+
+.custom-options-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid rgb(51, 210, 51);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-height: 350px;
+  overflow: hidden;
+}
+
+.custom-search-box {
+  position: relative;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+}
+
+.custom-search-box i {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.custom-search-box input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.custom-search-box input:focus {
+  border-color: rgb(51, 210, 51);
+}
+
+.custom-options {
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.custom-option {
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.custom-option:hover {
+  background: #e8f5e9;
+}
+
+.custom-option.selected {
+  background: #c8e6c9;
+  font-weight: 600;
+}
+
+.custom-option:last-child {
+  border-bottom: none;
+}
+
+.option-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.option-details {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.option-quantity {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.option-quantity.low {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}
+
+.no-results i {
+  font-size: 24px;
+  margin-bottom: 10px;
+  display: block;
+}
+
 .card {
   background: white;
   border-radius: 15px;
@@ -198,8 +382,8 @@ body {
   overflow-x: auto;
   overflow-y: auto;
   border-radius: 2px;
-  min-height: 650px;
-  max-height: 650px;
+  min-height: 750px;
+  max-height: 750px;
 }
 
 table {
@@ -287,6 +471,11 @@ tbody tr:hover {
   background: #f0f0f0;
 }
 
+.btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -355,6 +544,23 @@ tbody tr:hover {
   font-weight: 500;
 }
 
+/* Бейджи для причин списания */
+.badge-reason {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.badge-brak { background: #fee2e2; color: #dc2626; }
+.badge-porcha { background: #fef3c7; color: #d97706; }
+.badge-ustarevanie { background: #e0e7ff; color: #4338ca; }
+.badge-sale { background: #dbeafe; color: #1d4ed8; }
+.badge-peremeshenie { background: #d1fae5; color: #065f46; }
+.badge-inventarizaciya { background: #fce7f3; color: #9d174d; }
+.badge-other { background: #f3f4f6; color: #4b5563; }
+
 .notification {
   position: fixed;
   top: 20px;
@@ -410,95 +616,38 @@ tbody tr:hover {
   line-height: 1;
 }
 
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  1% {
-    background-position: 2% 50%;
-  }
-  2% {
-    background-position: 4% 50%;
-  }
-  3% {
-    background-position: 6% 50%;
-  }
-  4% {
-    background-position: 8% 50%;
-  }
-  5% {
-    background-position: 10% 50%;
-  }
-  10% {
-    background-position: 20% 50%;
-  }
-  15% {
-    background-position: 30% 50%;
-  }
-  20% {
-    background-position: 40% 50%;
-  }
-  25% {
-    background-position: 50% 50%;
-  }
-  30% {
-    background-position: 60% 50%;
-  }
-  35% {
-    background-position: 70% 50%;
-  }
-  40% {
-    background-position: 80% 50%;
-  }
-  45% {
-    background-position: 90% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
 
-  55% {
-    background-position: 90% 50%;
-  }
-  60% {
-    background-position: 80% 50%;
-  }
-  65% {
-    background-position: 70% 50%;
-  }
-  70% {
-    background-position: 60% 50%;
-  }
-  75% {
-    background-position: 50% 50%;
-  }
-  80% {
-    background-position: 40% 50%;
-  }
-  85% {
-    background-position: 30% 50%;
-  }
-  90% {
-    background-position: 20% 50%;
-  }
-  95% {
-    background-position: 10% 50%;
-  }
-  96% {
-    background-position: 8% 50%;
-  }
-  97% {
-    background-position: 6% 50%;
-  }
-  98% {
-    background-position: 4% 50%;
-  }
-  99% {
-    background-position: 2% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  1% { background-position: 2% 50%; }
+  2% { background-position: 4% 50%; }
+  3% { background-position: 6% 50%; }
+  4% { background-position: 8% 50%; }
+  5% { background-position: 10% 50%; }
+  10% { background-position: 20% 50%; }
+  15% { background-position: 30% 50%; }
+  20% { background-position: 40% 50%; }
+  25% { background-position: 50% 50%; }
+  30% { background-position: 60% 50%; }
+  35% { background-position: 70% 50%; }
+  40% { background-position: 80% 50%; }
+  45% { background-position: 90% 50%; }
+  50% { background-position: 100% 50%; }
+  55% { background-position: 90% 50%; }
+  60% { background-position: 80% 50%; }
+  65% { background-position: 70% 50%; }
+  70% { background-position: 60% 50%; }
+  75% { background-position: 50% 50%; }
+  80% { background-position: 40% 50%; }
+  85% { background-position: 30% 50%; }
+  90% { background-position: 20% 50%; }
+  95% { background-position: 10% 50%; }
+  96% { background-position: 8% 50%; }
+  97% { background-position: 6% 50%; }
+  98% { background-position: 4% 50%; }
+  99% { background-position: 2% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .footer {
@@ -511,4 +660,141 @@ tbody tr:hover {
 
 .footer h4 {
   padding-top: 10px;
+}
+
+/* Модальное окно */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Стили для поиска в модальном окне */
+#writeOffHistoryModal .controls {
+  padding: 0 15px;
+  margin-bottom: 15px;
+}
+
+#writeOffHistoryModal .search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#writeOffHistoryModal .search-box i {
+  position: absolute;
+  left: 15px;
+  color: #999;
+}
+
+#writeOffHistoryModal .search-box input {
+  padding: 10px 15px 10px 40px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  width: 250px;
+}
+
+#writeOffReasonFilter {
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+}
+
+/* Пагинация в истории */
+#writeOffPagination {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#writeOffPagination .btn-pagination {
+  padding: 8px 15px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#writeOffPagination .btn-pagination:hover {
+  background: #f0f0f0;
+}
+
+#writeOffPagination .btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .left-panel {
+    border-right: none;
+    border-bottom: 3px solid #0077b6;
+  }
+  
+  #writeOffHistoryModal .card-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #writeOffHistoryModal .controls {
+    flex-direction: column;
+  }
+  
+  #writeOffHistoryModal .search-box input {
+    width: 100%;
+  }
+  
+  .table-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #writeOffPagination {
+    justify-content: center;
+  }
+}
+
+.btnAudit {
+ 
+  margin: auto;
+  margin-top: 275px;
+  border-radius: 50px;
+
+}
+
+.btnAudit:hover {
+  background: #5ccaf6;
+  transform: translateY(-5px);
+  color: black;
+  border: 1px solid #1976d2;
 }

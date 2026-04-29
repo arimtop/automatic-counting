@@ -12,7 +12,7 @@
 </head>
 <body>
 <header id="header">
-    <div class="container mt-3">
+    <div class="container mt-4">
         <div class="row">
             <div class="col-sm-12">
                 <h1 class="text-center text-black p-3"><img src="./media/favicon.png" alt="logo" width="80px"> Учёт
@@ -23,19 +23,19 @@
 </header>
 
 
-<div class="section mt-5">
+<div class="section mt-4 col-11 m-auto">
     <div class="row" id="zagolovok3" style="background: linear-gradient(to right, #bcb3d0 0%, #06B6D4 100%);">
-        <div class="col-4 text-uppercase mt-3 mb-3">
+        <div class="col-6 text-uppercase mt-3 mb-3">
             <h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(0, 255, 42);"></i>
-                добавить</h2>
+                добавление</h2>
         </div>
-        <div class="col-8 text-uppercase mt-3 mb-3">
-            <h2 class="history text-center"><i class="fa-solid fa-clock-rotate-left"
-                    style="color: rgb(94, 95, 94); "></i> перечень товаров</h2>
+        <div class="col-6 text-uppercase mt-3 mb-3">
+            <h2 class="history text-center"><i class="fa-solid fa-square-minus" style="color: rgb(229, 39, 39);">
+            </i> Списание</h2>
         </div>
     </div>
     <div class="row m-0 base">
-        <div class="col-sm-4 left-panel">
+        <div class="col-sm-6 left-panel">
             <form>
 
                 <div class="form-group">
@@ -101,8 +101,99 @@
 
             </form>
         </div>
-        <div class="col-sm-8 mt-3">
-            <div class="right-panel">
+
+        <div class="col-sm-6 right-panel">
+            <form id="writeOffForm">
+    <div class="form-group">
+        <span class="form-label"><i class="fas fa-box"></i> Выберите изделие</span>
+        <!-- Кастомный выпадающий список с поиском -->
+        <div class="custom-select-wrapper">
+            <div class="custom-select" id="writeOffProductSelect">
+                <div class="custom-select-trigger" onclick="toggleSelect()" tabindex="0">
+                    <span class="custom-select-placeholder">Выберите изделие для списания</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-options-container" style="display: none;">
+                    <div class="custom-search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="productSearchInput" placeholder="Поиск изделия..." onkeyup="filterProducts(this.value)">
+                    </div>
+                    <div class="custom-options" id="writeOffProductOptions">
+                        <!-- Здесь будут опции -->
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="writeOffProduct" name="writeOffProduct">
+        </div>
+    </div>
+
+    <div class="form-group" id="selectedProductInfo" style="display: none;">
+        <div class="card p-3 mb-3" style="background: #f8f9fa;">
+            <h5>Информация об изделии:</h5>
+            <p><strong>Код:</strong> <span id="infoCode"></span></p>
+            <p><strong>Категория:</strong> <span id="infoCategory"></span></p>
+            <p><strong>Текущее количество:</strong> <span id="infoQuantity"></span> шт.</p>
+            <p><strong>Цена:</strong> <span id="infoPrice"></span> руб.</p>
+            <p><strong>Место хранения:</strong> <span id="infoLocation"></span></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="writeOffQuantity"><i class="fas fa-minus-circle" style="color: #dc2626;"></i> Количество для списания</label>
+        <input type="number" id="writeOffQuantity" min="1" value="1" required>
+    </div>
+
+    <div class="form-group">
+        <label for="writeOffReason"><i class="fas fa-comment-alt"></i> Причина списания</label>
+        <select id="writeOffReason" required>
+            <option value="">Выберите причину</option>
+            <option value="Брак">Брак</option>
+            <option value="Порча">Порча</option>
+            <option value="Устаревание">Устаревание</option>
+            <option value="Продажа">Продажа</option>
+            <option value="Перемещение">Перемещение на другой склад</option>
+            <option value="Инвентаризация">Недостача (инвентаризация)</option>
+            <option value="Другое">Другое</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="otherReasonGroup" style="display: none;">
+        <label for="otherReason"><i class="fas fa-pen"></i> Укажите причину</label>
+        <input type="text" id="otherReason" placeholder="Опишите причину списания">
+    </div>
+
+    <div class="form-group">
+        <label for="writeOffDate"><i class="fas fa-calendar-alt" style="color: forestgreen;"></i> Дата списания</label>
+        <input type="date" id="writeOffDate" required>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary" style="background: #dc2626; border-color: #dc2626;">
+            <i class="fas fa-minus-circle"></i> Списать изделие
+        </button>
+        <button type="reset" id="clearWriteOffForm" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Очистить форму
+        </button>
+    </div>
+</form>
+
+
+<div class="row m-0 mt-3">
+    <div class="col-sm-12 text-center">
+        <button onclick="showWriteOffHistory()" class="btn btnAudit">
+            <i class="fas fa-history"></i> История списаний
+        </button>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row m-0 mt-4">
+    <div class="col-sm-12">
+        <div class="col-sm-12">
+            <div class="full-panel">
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fas fa-list"></i> Список изделий</h2>
@@ -114,7 +205,6 @@
                             <select id="categoryFilter">
                                 <option value="">Все категории</option>
                             </select>
-
                         </div>
                     </div>
                     <div class="table-container">
@@ -150,13 +240,13 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
+
+
 <div class="row m-0">
-    <div class="col-sm-9 mt-5 m-auto">
+    <div class="col-sm-9 m-auto">
         <div class="card stats mb-0">
             <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
             <div class="stats-grid">
@@ -184,14 +274,96 @@
                 <button onclick="clearAllData()" class="btn btn-sm btn-outline-danger">
                     <i class="fas fa-trash-alt"></i> Очистить всё
                 </button>
+                <button onclick="generateTestData()" class="btn btn-sm btn-outline-primary" id="generateDataBtn">
+                    <i class="fas fa-magic"></i> Тестовые данные
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<footer id="footer" class="footer mt-5">
+<!-- Модальное окно истории списаний -->
+<div id="writeOffHistoryModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 95%; margin: 20px auto;">
+        <div class="card" style="border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <h2><i class="fas fa-history"></i> История списаний</h2>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="exportWriteOffHistory()" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-file-csv"></i> Экспорт CSV
+                    </button>
+                    <button onclick="clearWriteOffHistory()" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash-alt"></i> Очистить историю
+                    </button>
+                    <button onclick="closeWriteOffHistory()" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-times"></i> Закрыть
+                    </button>
+                </div>
+            </div>
+            
+            <div class="controls mb-3" style="padding: 0 15px;">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="writeOffSearchInput" placeholder="Поиск по истории списаний..." 
+                           oninput="searchWriteOffHistory(this.value)" style="width: 20em;">
+                </div>
+                <select id="writeOffReasonFilter" onchange="filterWriteOffHistory()">
+                    <option value="">Все причины</option>
+                    <option value="Брак">Брак</option>
+                    <option value="Порча">Порча</option>
+                    <option value="Устаревание">Устаревание</option>
+                    <option value="Продажа">Продажа</option>
+                    <option value="Перемещение">Перемещение на другой склад</option>
+                    <option value="Инвентаризация">Недостача (инвентаризация)</option>
+                    <option value="Другое">Другое</option>
+                </select>
+            </div>
+            
+            <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar-alt" style="color: burlywood;"></i> Дата</th>
+                            <th><i class="fas fa-barcode" style="color: black;"></i> Код</th>
+                            <th><i class="fas fa-tag" style="color: red;"></i> Название</th>
+                            <th><i class="fas fa-folder" style="color: yellow;"></i> Категория</th>
+                            <th><i class="fas fa-minus-circle" style="color: brown;"></i> Списано</th>
+                            <th><i class="fas fa-ruble-sign" style="color: black;"></i> Цена</th>
+                            <th><i class="fas fa-calculator" style="color: lightgreen;"></i> Сумма</th>
+                            <th><i class="fas fa-comment-alt" style="color: lightgray;"></i> Причина</th>
+                            <th><i class="fas fa-map-marker-alt" style="color: red;"></i> Место</th>
+                        </tr>
+                    </thead>
+                    <tbody id="writeOffHistoryList">
+                        <!-- Здесь будет история -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-footer" style="flex-wrap: wrap; gap: 15px;">
+                <div class="summary">
+                    <strong>Всего списано:</strong>
+                    <span id="totalWriteOffQuantity">0</span> шт. на сумму
+                    <span id="totalWriteOffValue">0</span> руб.
+                </div>
+                
+                <div class="pagination" id="writeOffPagination">
+                    <button id="writeOffPrevPage" class="btn-pagination" onclick="writeOffPrevPage()">
+                        <i class="fas fa-chevron-left"></i> Назад
+                    </button>
+                    <span id="writeOffPageInfo">Страница 1 из 1</span>
+                    <button id="writeOffNextPage" class="btn-pagination" onclick="writeOffNextPage()">
+                        Вперед <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <h4 class="text-center mb-5"><i class="fas fa-graduation-cap"></i> Курсовой проект</h4>
+<footer id="footer" class="footer mt-4">
+
+    <h4 class="text-center mb-5"><i class="fas fa-graduation-cap"></i> Дипломная работа</h4>
 
     <div class="row m-0">
         <div class="col-sm-6">
@@ -222,6 +394,7 @@
                 <li>CRUD операции с изделиями</li>
                 <li>Поиск и фильтрация</li>
                 <li>Адаптивный дизайн</li>
+                <li>Списание товаров с историей</li>
             </ul>
         </div>
     </div>
@@ -229,14 +402,14 @@
     <div class="row mt-3 m-0">
         <div class="contacts col-sm-12 text-center">
             <hr>
-            <p class="mb-1">Дата защиты: 19.02.2026 - 21.02.2026</p>
+            <p class="mb-1">Защита дипломной работы</p>
             <p>Ожидаемая оценка: 5</p>
         </div>
     </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script> 
-   <script src="./js/javascript.js"></script>
-</script> 
+<script src="./js/javascript.js"></script>
 </body>
 </html>
