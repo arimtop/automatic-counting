@@ -2,3 +2,5 @@
 
 или посмотреть в открытом доступе на GitHub
 https://arimtop.github.io/automatic-counting/
+
+Для активации защищённых действий, пароль "0000"

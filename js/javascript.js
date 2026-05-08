@@ -12,7 +12,6 @@ let isEditing = false;
 let editingProductCode = null;
 
 const itemsPerPage = 10;
-const writeOffItemsPerPage = 10;
 
 function getElement(id) {
     return document.getElementById(id);
@@ -35,6 +34,35 @@ const totalValueEl = getElement("totalValue");
 const categoriesCountEl = getElement("categoriesCount");
 
 getElement("productDate").valueAsDate = new Date();
+
+async function sha1(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    const hashBuffer = await crypto.subtle.digest("SHA-1", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(function(b) {
+        return b.toString(16).padStart(2, "0");
+    }).join("");
+    return hashHex;
+}
+
+async function checkPassword(actionName) {
+    const enteredPassword = prompt(`Для выполнения действия "${actionName}" введите пароль:`);
+    
+    if (enteredPassword === null) {
+        return false;
+    }
+    
+    const enteredHash = await sha1(enteredPassword);
+    const correctHash = await sha1("0000");
+    
+    if (enteredHash !== correctHash) {
+        showNotification("Неверный пароль! Доступ запрещён.", "error");
+        return false;
+    }
+    
+    return true;
+}
 
 function formatNumber(number) {
     if (number === null || number === undefined) return "0";
@@ -896,28 +924,55 @@ function getActionBadgeHTML(type) {
     return badges[type] || '<span class="badge-reason badge-other">Прочее</span>';
 }
 
+function getWriteOffItemsPerPage() {
+    const modal = getElement("writeOffHistoryModal");
+    if (!modal) return 10;
+    
+    const modalContent = modal.querySelector(".modal-content-large");
+    if (!modalContent) return 10;
+    
+    const headerHeight = 80;
+    const controlsHeight = 70;
+    const footerHeight = 70;
+    const tableHeadHeight = 50;
+    
+    const availableHeight = modalContent.clientHeight - headerHeight - controlsHeight - footerHeight - tableHeadHeight;
+    const rowHeight = 52;
+    
+    const calculatedItems = Math.floor(availableHeight / rowHeight);
+    
+    return Math.max(3, Math.min(calculatedItems, 100));
+}
+
 function showWriteOffHistory() {
     const modal = getElement("writeOffHistoryModal");
     
     if (!modal) return;
     
-    writeOffHistoryPage = 1;
-    writeOffSearchFilter = "";
-    writeOffReasonFilterValue = "";
-    
-    const searchInput = getElement("writeOffSearchInput");
-    const reasonFilter = getElement("writeOffReasonFilter");
-    
-    if (searchInput) searchInput.value = "";
-    if (reasonFilter) reasonFilter.value = "";
-    
-    modal.style.display = "block";
-    renderWriteOffHistory();
-    
-    modal.addEventListener("click", function(event) {
-        if (event.target === modal) {
-            closeWriteOffHistory();
-        }
+    checkPassword("Просмотр истории операций").then(function(hasAccess) {
+        if (!hasAccess) return;
+        
+        writeOffHistoryPage = 1;
+        writeOffSearchFilter = "";
+        writeOffReasonFilterValue = "";
+        
+        const searchInput = getElement("writeOffSearchInput");
+        const reasonFilter = getElement("writeOffReasonFilter");
+        
+        if (searchInput) searchInput.value = "";
+        if (reasonFilter) reasonFilter.value = "";
+        
+        modal.style.display = "block";
+        
+        setTimeout(function() {
+            renderWriteOffHistory();
+        }, 100);
+        
+        modal.addEventListener("click", function(event) {
+            if (event.target === modal) {
+                closeWriteOffHistory();
+            }
+        });
     });
 }
 
@@ -968,14 +1023,15 @@ function renderWriteOffHistory() {
         return dateB - dateA;
     });
     
-    const totalPages = Math.ceil(allHistory.length / writeOffItemsPerPage);
+    const dynamicItemsPerPage = getWriteOffItemsPerPage();
+    const totalPages = Math.ceil(allHistory.length / dynamicItemsPerPage);
     
     if (writeOffHistoryPage > totalPages && totalPages > 0) {
         writeOffHistoryPage = totalPages;
     }
     
-    const startIndex = (writeOffHistoryPage - 1) * writeOffItemsPerPage;
-    const endIndex = startIndex + writeOffItemsPerPage;
+    const startIndex = (writeOffHistoryPage - 1) * dynamicItemsPerPage;
+    const endIndex = startIndex + dynamicItemsPerPage;
     const pageHistory = allHistory.slice(startIndex, endIndex);
     
     if (pageHistory.length === 0) {
@@ -1093,7 +1149,8 @@ function writeOffNextPage() {
         });
     }
     
-    const totalPages = Math.ceil(allHistory.length / writeOffItemsPerPage);
+    const dynamicItemsPerPage = getWriteOffItemsPerPage();
+    const totalPages = Math.ceil(allHistory.length / dynamicItemsPerPage);
     
     if (writeOffHistoryPage < totalPages) {
         writeOffHistoryPage++;
@@ -1104,6 +1161,12 @@ function writeOffNextPage() {
 async function clearWriteOffHistory() {
     if (changeHistory.length === 0) {
         showNotification("История операций уже пуста", "info");
+        return;
+    }
+    
+    const hasAccess = await checkPassword("Очистка истории операций");
+    
+    if (!hasAccess) {
         return;
     }
     
@@ -1191,7 +1254,17 @@ async function clearAllData() {
         return;
     }
     
+    const hasAccess = await checkPassword("Очистка всех данных");
+    
+    if (!hasAccess) {
+        return;
+    }
+    
     if (confirm(`Удалить ВСЕ данные (${products.length} изделий)?`)) {
+        products.forEach(function(product) {
+            createHistoryRecord('delete', product);
+        });
+        
         products = [];
         await saveToStorage('products', products);
         
