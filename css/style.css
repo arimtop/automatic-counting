@@ -141,11 +141,8 @@ body {
 }
 
 .left-panel {
-  border-right: 3px solid #0077b6;
-}
-
-.right-panel {
-  padding: 20px;
+  border-right: 3px dotted #0077b6;
+  margin-top: 5px;
 }
 
 .info-card {
@@ -400,6 +397,25 @@ body {
   border-radius: 2px;
   min-height: 750px;
   max-height: 750px;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 table {
@@ -688,14 +704,61 @@ tbody tr:hover {
 
 .modal-table-container {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: auto;
   max-height: none;
-  min-height: auto;
+  min-height: 200px;
+  position: relative;
+}
+
+/* Стилизация скроллбара для модальной таблицы */
+.modal-table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.modal-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.modal-table-container::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Для Firefox */
+.modal-table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.modal-table-container table td {
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+.modal-table-container table th {
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+/* Фиксируем заголовок таблицы */
+.modal-table-container table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .modal-table-footer {
   flex-wrap: wrap;
   gap: 15px;
+  padding: 10px 0;
+  border-top: 1px solid #e0e0e0;
 }
 
 #writeOffPagination .btn-pagination {
@@ -780,6 +843,10 @@ tbody tr:hover {
   .table-footer {
     flex-direction: column;
     align-items: stretch;
+  }
+  
+  .modal-table-container {
+    min-height: 150px;
   }
   
   #writeOffPagination {

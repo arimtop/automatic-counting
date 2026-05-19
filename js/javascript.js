@@ -13,6 +13,22 @@ let editingProductCode = null;
 
 const itemsPerPage = 10;
 
+let importData = [];
+let importErrors = [];
+
+const categoryPrefixes = {
+    "Электроника": "ELEC",
+    "Мебель": "FURN",
+    "Инструменты": "TOOL",
+    "Канцелярия": "STAT",
+    "Продукты": "FOOD",
+    "Одежда": "CLTH",
+    "Хозтовары": "HOUS",
+    "Спорт": "SPRT",
+    "Авто": "AUTO",
+    "Стройматериалы": "BUILD"
+};
+
 function getElement(id) {
     return document.getElementById(id);
 }
@@ -34,6 +50,43 @@ const totalValueEl = getElement("totalValue");
 const categoriesCountEl = getElement("categoriesCount");
 
 getElement("productDate").valueAsDate = new Date();
+
+function getCategoryPrefix(category) {
+    if (categoryPrefixes[category]) {
+        return categoryPrefixes[category];
+    }
+    
+    const cleanName = category.toUpperCase().replace(/[^A-ZА-Я0-9]/g, '');
+    
+    if (cleanName.length >= 4) {
+        return cleanName.substring(0, 4);
+    } else if (cleanName.length >= 2) {
+        return cleanName.substring(0, 2);
+    } else {
+        return 'OTHER';
+    }
+}
+
+function generateProductCode(category, excludeProductId = null) {
+    const prefix = getCategoryPrefix(category);
+    
+    const existingCodes = products
+        .filter(function(p) {
+            return p.code.startsWith(prefix + '-') && p.id !== excludeProductId;
+        })
+        .map(function(p) {
+            return parseInt(p.code.split('-')[1]) || 0;
+        });
+    
+    let nextNumber = 1;
+    if (existingCodes.length > 0) {
+        nextNumber = Math.max(...existingCodes) + 1;
+    }
+    
+    const formattedNumber = String(nextNumber).padStart(3, '0');
+    
+    return `${prefix}-${formattedNumber}`;
+}
 
 async function sha1(str) {
     const encoder = new TextEncoder();
@@ -94,7 +147,7 @@ function showNotification(message, type = "info") {
     
     setTimeout(function() {
         notification.remove();
-    }, 3000);
+    }, 5000);
 }
 
 function getCurrentDateTime() {
@@ -110,11 +163,21 @@ function resetEditMode() {
     isEditing = false;
     editingProductCode = null;
     
+    const codeInput = getElement("productCode");
+    codeInput.style.backgroundColor = '';
+    codeInput.title = '';
+    codeInput.readOnly = false;
+    
     const submitBtn = productForm.querySelector('button[type="submit"]');
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить изделие';
         submitBtn.style.background = '';
         submitBtn.style.borderColor = '';
+    }
+    
+    const category = getElement("productCategory").value;
+    if (category) {
+        getElement("productCode").value = generateProductCode(category);
     }
 }
 
@@ -200,9 +263,10 @@ function refreshCategories() {
     
     uniqueCategories.forEach(function(category) {
         if (category && category.trim() !== "") {
+            const prefix = getCategoryPrefix(category);
             const formOption = document.createElement("option");
             formOption.value = category;
-            formOption.textContent = category;
+            formOption.textContent = `${category} (${prefix})`;
             categorySelect.appendChild(formOption);
             
             const filterOption = document.createElement("option");
@@ -224,11 +288,18 @@ function refreshCategories() {
 }
 
 function readFormData() {
+    const category = getElement("productCategory").value;
+    let code = getElement("productCode").value.trim();
+    
+    if (!code && category) {
+        code = generateProductCode(category);
+    }
+    
     return {
         id: Date.now(),
-        code: getElement("productCode").value.trim(),
+        code: code,
         name: getElement("productName").value.trim(),
-        category: getElement("productCategory").value,
+        category: category,
         quantity: parseInt(getElement("productQuantity").value),
         price: parseFloat(getElement("productPrice").value),
         description: getElement("productDescription").value.trim(),
@@ -252,6 +323,13 @@ function resetForm() {
     productForm.reset();
     getElement("productDate").valueAsDate = new Date();
     getElement("productQuantity").value = 1;
+    
+    const category = getElement("productCategory").value;
+    if (category) {
+        getElement("productCode").value = generateProductCode(category);
+    } else {
+        getElement("productCode").value = '';
+    }
 }
 
 function detectChanges(oldProduct, newProduct) {
@@ -306,6 +384,15 @@ async function addProduct(event) {
     
     const product = readFormData();
     
+    const codeExists = products.some(function(p) {
+        return p.code === product.code && p.id !== product.id;
+    });
+    
+    if (codeExists && !isEditing) {
+        product.code = generateProductCode(product.category);
+        showNotification(`Код был изменен на ${product.code}`, "warning");
+    }
+    
     if (isEditing) {
         const oldProduct = products.find(function(p) {
             return p.code === editingProductCode;
@@ -313,6 +400,10 @@ async function addProduct(event) {
         
         if (oldProduct) {
             const oldValues = {...oldProduct};
+            
+            if (oldValues.category !== product.category) {
+                product.code = generateProductCode(product.category, oldProduct.id);
+            }
             
             Object.assign(oldProduct, product, { id: oldProduct.id });
             
@@ -353,12 +444,17 @@ async function addProduct(event) {
         return;
     }
     
+    if (!isEditing) {
+        product.code = generateProductCode(product.category);
+    }
+    
     products.push(product);
     createHistoryRecord('add', product);
     
     await saveToStorage('products', products);
     refreshAll();
     resetForm();
+    resetEditMode();
     
     showNotification(`Изделие "${product.name}" успешно добавлено!`, "success");
 }
@@ -394,6 +490,10 @@ async function editProduct(id) {
     editingProductCode = product.code;
     
     fillFormData(product);
+    
+    const codeInput = getElement("productCode");
+    codeInput.style.backgroundColor = '#fff3cd';
+    codeInput.title = 'Код можно изменить вручную';
     
     const submitBtn = productForm.querySelector('button[type="submit"]');
     if (submitBtn) {
@@ -520,9 +620,11 @@ function newCategories() {
             const categorySelect = getElement("productCategory");
             const filterSelect = getElement("categoryFilter");
             
+            const prefix = getCategoryPrefix(trimmedCategory);
+            
             const formOption = document.createElement("option");
             formOption.value = trimmedCategory;
-            formOption.textContent = trimmedCategory;
+            formOption.textContent = `${trimmedCategory} (${prefix})`;
             categorySelect.appendChild(formOption);
             
             const filterOption = document.createElement("option");
@@ -530,7 +632,10 @@ function newCategories() {
             filterOption.textContent = trimmedCategory;
             filterSelect.appendChild(filterOption);
             
-            showNotification(`Категория "${trimmedCategory}" добавлена!`, "success");
+            categorySelect.value = trimmedCategory;
+            getElement("productCode").value = generateProductCode(trimmedCategory);
+            
+            showNotification(`Категория "${trimmedCategory}" добавлена! Префикс: ${prefix}`, "success");
         } else {
             showNotification("Такая категория уже существует!", "error");
         }
@@ -716,6 +821,7 @@ function initWriteOffSelect() {
             if (container && container.style.display !== "none") {
                 closeSelect();
             }
+            closeImportModal();
         }
     });
     
@@ -820,65 +926,8 @@ async function writeOffProduct(event) {
     }
     
     const product = products[productIndex];
-    const totalCost = quantity * product.price;
     
-    const operationRecord = {
-        id: Date.now(),
-        type: 'writeOff',
-        productId: productId,
-        productCode: product.code,
-        productName: product.name,
-        category: product.category,
-        quantity: quantity,
-        price: product.price,
-        totalCost: totalCost,
-        reason: reason,
-        date: date,
-        time: getCurrentDateTime().time,
-        location: product.location,
-        description: product.description || 'Описание отсутствует',
-        oldQuantity: null,
-        oldPrice: null,
-        oldCode: null,
-        oldCategory: null,
-        oldLocation: null
-    };
-    
-    changeHistory.push(operationRecord);
-    
-    products[productIndex].quantity -= quantity;
-    
-    if (products[productIndex].quantity === 0) {
-        if (confirm(`Изделие "${product.name}" полностью списано. Удалить его из списка?`)) {
-            const deleteRecord = {
-                id: Date.now() + 1,
-                type: 'delete',
-                productId: productId,
-                productCode: product.code,
-                productName: product.name,
-                category: product.category,
-                quantity: 0,
-                price: product.price,
-                totalCost: 0,
-                reason: 'Полное списание',
-                date: getCurrentDateTime().date,
-                time: getCurrentDateTime().time,
-                location: product.location,
-                description: product.description || 'Описание отсутствует',
-                oldQuantity: null,
-                oldPrice: null,
-                oldCode: null,
-                oldCategory: null,
-                oldLocation: null
-            };
-            
-            changeHistory.push(deleteRecord);
-            products.splice(productIndex, 1);
-        }
-    }
-    
-    await saveToStorage('products', products);
-    await saveToStorage('changeHistory', changeHistory);
+    await performWriteOff(product, quantity, reason, date);
     
     refreshAll();
     
@@ -899,6 +948,395 @@ async function writeOffProduct(event) {
     );
 }
 
+async function performWriteOff(product, quantity, reason, date) {
+    const totalCost = quantity * product.price;
+    
+    const operationRecord = {
+        id: Date.now(),
+        type: 'writeOff',
+        productId: product.id,
+        productCode: product.code,
+        productName: product.name,
+        category: product.category,
+        quantity: quantity,
+        price: product.price,
+        totalCost: totalCost,
+        reason: reason,
+        date: date,
+        time: getCurrentDateTime().time,
+        location: product.location,
+        description: product.description || 'Описание отсутствует',
+        oldQuantity: null,
+        oldPrice: null,
+        oldCode: null,
+        oldCategory: null,
+        oldLocation: null
+    };
+    
+    changeHistory.push(operationRecord);
+    
+    product.quantity -= quantity;
+    
+    if (product.quantity === 0) {
+        const index = products.findIndex(p => p.id === product.id);
+        if (index !== -1) {
+            products.splice(index, 1);
+        }
+    }
+}
+
+// ============ ФУНКЦИИ ИМПОРТА EXCEL ============
+
+function downloadTemplate() {
+    const templateData = [
+        ['Код изделия', 'Название', 'Количество', 'Причина списания', 'Дата'],
+        ['ELEC-001', 'Ноутбук Dell XPS', '2', 'Продажа', '2026-05-19'],
+        ['TOOL-001', 'Дрель электрическая', '1', 'Перемещение', '2026-05-19'],
+        ['STAT-001', 'Бумага А4', '50', 'Инвентаризация', '2026-05-19']
+    ];
+    
+    const ws = XLSX.utils.aoa_to_sheet(templateData);
+    
+    ws['!cols'] = [
+        { wch: 15 },
+        { wch: 25 },
+        { wch: 12 },
+        { wch: 20 },
+        { wch: 12 }
+    ];
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Накладная');
+    
+    XLSX.writeFile(wb, 'Шаблон_накладной.xlsx');
+    showNotification('Шаблон накладной скачан', 'success');
+}
+
+function importFromExcel() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.xlsx,.xls';
+    fileInput.style.display = 'none';
+    
+    fileInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        showNotification('Чтение файла...', 'info');
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                if (jsonData.length < 2) {
+                    showNotification('Файл пуст или содержит только заголовки', 'error');
+                    return;
+                }
+                
+                parseImportData(jsonData);
+                showImportModal();
+                
+            } catch (error) {
+                console.error('Ошибка чтения файла:', error);
+                showNotification('Ошибка чтения файла. Проверьте формат.', 'error');
+            }
+        };
+        
+        reader.onerror = function() {
+            showNotification('Ошибка чтения файла', 'error');
+        };
+        
+        reader.readAsArrayBuffer(file);
+    };
+    
+    fileInput.click();
+}
+
+function parseImportData(rawData) {
+    importData = [];
+    importErrors = [];
+    
+    const headers = rawData[0].map(h => String(h || '').toLowerCase().trim());
+    
+    const codeIndex = headers.findIndex(h => 
+        h.includes('код') || h === 'code' || h.includes('артикул') || h.includes('шифр')
+    );
+    const nameIndex = headers.findIndex(h => 
+        h.includes('назван') || h.includes('наименован') || h === 'name' || h.includes('товар')
+    );
+    const quantityIndex = headers.findIndex(h => 
+        h.includes('колич') || h === 'quantity' || h.includes('кол-во') || h === 'шт'
+    );
+    const reasonIndex = headers.findIndex(h => 
+        h.includes('причин') || h === 'reason' || h.includes('основан')
+    );
+    const dateIndex = headers.findIndex(h => 
+        h.includes('дат') || h === 'date'
+    );
+    
+    const missingColumns = [];
+    
+    if (codeIndex === -1) {
+        missingColumns.push('"Код изделия" (варианты: Код, Артикул, Шифр)');
+    }
+    
+    if (nameIndex === -1) {
+        missingColumns.push('"Название" (варианты: Наименование, Товар)');
+    }
+    
+    if (quantityIndex === -1) {
+        missingColumns.push('"Количество" (варианты: Кол-во, Шт)');
+    }
+    
+    if (reasonIndex === -1) {
+        missingColumns.push('"Причина списания" (варианты: Причина, Основание)');
+    }
+    
+    if (dateIndex === -1) {
+        missingColumns.push('"Дата"');
+    }
+    
+    if (missingColumns.length > 0) {
+        importErrors.push('В файле отсутствуют обязательные колонки:');
+        missingColumns.forEach(col => {
+            importErrors.push('• ' + col);
+        });
+        importErrors.push('Все колонки являются обязательными для импорта!');
+        showNotification('Не найдены обязательные колонки в файле', 'error');
+        return;
+    }
+    
+    for (let i = 1; i < rawData.length; i++) {
+        const row = rawData[i];
+        
+        if (!row || row.length === 0) continue;
+        
+        const code = String(row[codeIndex] || '').trim();
+        const name = String(row[nameIndex] || '').trim();
+        const quantity = parseInt(row[quantityIndex]) || 0;
+        const reason = String(row[reasonIndex] || '').trim();
+        const date = formatExcelDate(row[dateIndex]);
+        
+        if (!code) continue;
+        
+        const importItem = {
+            code,
+            name: name || 'Не указано',
+            quantity,
+            reason: reason || 'Не указана',
+            date,
+            status: 'pending',
+            errors: []
+        };
+        
+        if (!name) {
+            importItem.errors.push('Не указано название изделия');
+        }
+        
+        if (!reason) {
+            importItem.errors.push('Не указана причина списания');
+        }
+        
+        if (!date || date === 'Invalid Date') {
+            importItem.errors.push('Некорректная дата');
+        }
+        
+        const product = products.find(p => p.code === code);
+        
+        if (!product) {
+            importItem.status = 'error';
+            importItem.errors.push(`Товар с кодом "${code}" не найден в базе`);
+            importItem.category = '—';
+            importItem.availableQuantity = 0;
+        } else {
+            importItem.category = product.category;
+            importItem.availableQuantity = product.quantity;
+            importItem.productId = product.id;
+            importItem.price = product.price;
+            importItem.location = product.location;
+            importItem.description = product.description;
+            
+            if (quantity <= 0) {
+                importItem.status = 'error';
+                importItem.errors.push('Некорректное количество (должно быть больше 0)');
+            } else if (quantity > product.quantity) {
+                importItem.status = 'warning';
+                importItem.errors.push(`Недостаточно на складе (доступно: ${product.quantity} шт.)`);
+            } else if (importItem.errors.length === 0) {
+                importItem.status = 'success';
+            } else {
+                importItem.status = 'error';
+            }
+        }
+        
+        importData.push(importItem);
+    }
+    
+    if (importData.length === 0) {
+        importErrors.push('Не найдено ни одной строки с данными');
+    }
+}
+
+function formatExcelDate(excelDate) {
+    if (!excelDate) return null;
+    
+    if (typeof excelDate === 'number') {
+        const date = new Date((excelDate - 25569) * 86400 * 1000);
+        if (!isNaN(date.getTime())) {
+            return date.toISOString().split('T')[0];
+        }
+    }
+    
+    if (typeof excelDate === 'string') {
+        const formats = [
+            /^(\d{2})\.(\d{2})\.(\d{4})$/,
+            /^(\d{4})-(\d{2})-(\d{2})$/,
+            /^(\d{2})\/(\d{2})\/(\d{4})$/
+        ];
+        
+        for (const format of formats) {
+            const match = excelDate.match(format);
+            if (match) {
+                if (format === formats[0]) {
+                    return `${match[3]}-${match[2]}-${match[1]}`;
+                }
+                return excelDate;
+            }
+        }
+    }
+    
+    const date = new Date(excelDate);
+    if (!isNaN(date.getTime())) {
+        return date.toISOString().split('T')[0];
+    }
+    
+    return null;
+}
+
+function showImportModal() {
+    const modal = getElement('importModal');
+    if (!modal) {
+        showNotification('Ошибка: не найдено модальное окно импорта', 'error');
+        return;
+    }
+    
+    const successCount = importData.filter(item => item.status === 'success').length;
+    const warningCount = importData.filter(item => item.status === 'warning').length;
+    const errorCount = importData.filter(item => item.status === 'error').length;
+    
+    const summary = getElement('importSummary');
+    if (summary) {
+        summary.innerHTML = `
+            <div class="d-flex flex-wrap gap-3 mb-3">
+                <span class="badge" style="background: #10b981; color: white; padding: 8px 15px; font-size: 14px;">
+                    Успешно: ${successCount}
+                </span>
+                <span class="badge" style="background: #f59e0b; color: white; padding: 8px 15px; font-size: 14px;">
+                    Предупреждения: ${warningCount}
+                </span>
+                <span class="badge" style="background: #ef4444; color: white; padding: 8px 15px; font-size: 14px;">
+                    Ошибки: ${errorCount}
+                </span>
+                <span class="badge" style="background: #3b82f6; color: white; padding: 8px 15px; font-size: 14px;">
+                    Всего позиций: ${importData.length}
+                </span>
+            </div>
+            ${importErrors.length > 0 ? `
+                <div class="alert alert-danger">
+                    <strong>Ошибки структуры файла:</strong><br>
+                    ${importErrors.join('<br>')}
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    const tbody = getElement('importPreviewBody');
+    if (tbody) {
+        tbody.innerHTML = importData.map((item, index) => `
+            <tr style="${item.status === 'error' ? 'background: #fee2e2;' : item.status === 'warning' ? 'background: #fef3c7;' : ''}">
+                <td><strong>${item.code}</strong></td>
+                <td>${item.name}</td>
+                <td>${item.category || '—'}</td>
+                <td><strong>${item.quantity}</strong></td>
+                <td>${item.availableQuantity || '—'}</td>
+                <td>${item.reason}</td>
+                <td>${item.date || '—'}</td>
+                <td style="color: #ef4444; font-size: 13px;">${item.errors.join('<br>') || '—'}</td>
+            </tr>
+        `).join('');
+    }
+    
+    const confirmBtn = getElement('confirmImportBtn');
+    if (confirmBtn) {
+        confirmBtn.disabled = successCount === 0;
+        confirmBtn.textContent = `Подтвердить импорт (${successCount} позиций)`;
+    }
+    
+    modal.style.display = 'block';
+}
+
+function closeImportModal() {
+    const modal = getElement('importModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    importData = [];
+    importErrors = [];
+}
+
+async function confirmImport() {
+    const successItems = importData.filter(item => item.status === 'success');
+    
+    if (successItems.length === 0) {
+        showNotification('Нет позиций для импорта', 'warning');
+        return;
+    }
+    
+    const hasAccess = await checkPassword('Массовое списание из накладной');
+    
+    if (!hasAccess) {
+        return;
+    }
+    
+    if (!confirm(`Вы уверены, что хотите списать ${successItems.length} позиций из накладной?`)) {
+        return;
+    }
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const item of successItems) {
+        const product = products.find(p => p.id === item.productId);
+        
+        if (product && product.quantity >= item.quantity) {
+            await performWriteOff(product, item.quantity, item.reason, item.date);
+            successCount++;
+        } else {
+            errorCount++;
+        }
+    }
+    
+    await saveToStorage('products', products);
+    await saveToStorage('changeHistory', changeHistory);
+    
+    refreshAll();
+    closeImportModal();
+    
+    showNotification(
+        `Импорт завершен! Успешно списано: ${successCount} позиций` + 
+        (errorCount > 0 ? `, ошибок: ${errorCount}` : ''),
+        errorCount > 0 ? 'warning' : 'success'
+    );
+}
+
+// ============ ФУНКЦИИ ИСТОРИИ ============
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
@@ -913,7 +1351,24 @@ function formatTime(timeString) {
     return timeString.substring(0, 5);
 }
 
-function getActionBadgeHTML(type) {
+function getActionBadgeHTML(type, reason) {
+    if (reason) {
+        const reasonLower = reason.toLowerCase();
+        if (reasonLower.includes('инвентар')) {
+            return '<span class="badge-reason badge-inventarizaciya">Инвентаризация</span>';
+        } else if (reasonLower.includes('продаж')) {
+            return '<span class="badge-reason badge-sale">Продажа</span>';
+        } else if (reasonLower.includes('перемещен')) {
+            return '<span class="badge-reason badge-peremeshenie">Перемещение</span>';
+        } else if (reasonLower.includes('брак')) {
+            return '<span class="badge-reason badge-brak">Брак</span>';
+        } else if (reasonLower.includes('порч')) {
+            return '<span class="badge-reason badge-porcha">Порча</span>';
+        } else if (reasonLower.includes('устарев')) {
+            return '<span class="badge-reason badge-ustarevanie">Устаревание</span>';
+        }
+    }
+    
     const badges = {
         'add': '<span class="badge-reason badge-sale">Добавление</span>',
         'update': '<span class="badge-reason badge-ustarevanie">Обновление</span>',
@@ -926,22 +1381,26 @@ function getActionBadgeHTML(type) {
 
 function getWriteOffItemsPerPage() {
     const modal = getElement("writeOffHistoryModal");
-    if (!modal) return 10;
+    if (!modal) return 5;
     
     const modalContent = modal.querySelector(".modal-content-large");
-    if (!modalContent) return 10;
+    if (!modalContent) return 5;
     
-    const headerHeight = 80;
-    const controlsHeight = 70;
-    const footerHeight = 70;
-    const tableHeadHeight = 50;
+    const modalHeight = modalContent.clientHeight;
     
-    const availableHeight = modalContent.clientHeight - headerHeight - controlsHeight - footerHeight - tableHeadHeight;
-    const rowHeight = 52;
+    const headerHeight = 70;
+    const summaryHeight = 40;
+    const controlsHeight = 60;
+    const footerHeight = 60;
+    const tableHeadHeight = 45;
+    
+    const availableHeight = modalHeight - headerHeight - summaryHeight - controlsHeight - footerHeight - tableHeadHeight - 60;
+    
+    const rowHeight = 55;
     
     const calculatedItems = Math.floor(availableHeight / rowHeight);
     
-    return Math.max(3, Math.min(calculatedItems, 100));
+    return Math.max(3, Math.min(calculatedItems, 20));
 }
 
 function showWriteOffHistory() {
@@ -1007,7 +1466,8 @@ function renderWriteOffHistory() {
         allHistory = allHistory.filter(function(record) {
             return (record.productName && record.productName.toLowerCase().includes(writeOffSearchFilter)) ||
                    (record.productCode && record.productCode.toLowerCase().includes(writeOffSearchFilter)) ||
-                   (record.description && record.description.toLowerCase().includes(writeOffSearchFilter));
+                   (record.description && record.description.toLowerCase().includes(writeOffSearchFilter)) ||
+                   (record.reason && record.reason.toLowerCase().includes(writeOffSearchFilter));
         });
     }
     
@@ -1031,15 +1491,24 @@ function renderWriteOffHistory() {
     }
     
     const startIndex = (writeOffHistoryPage - 1) * dynamicItemsPerPage;
-    const endIndex = startIndex + dynamicItemsPerPage;
+    const endIndex = Math.min(startIndex + dynamicItemsPerPage, allHistory.length);
     const pageHistory = allHistory.slice(startIndex, endIndex);
     
-    if (pageHistory.length === 0) {
+    if (pageHistory.length === 0 && allHistory.length === 0) {
         historyList.innerHTML = `
             <tr>
                 <td colspan="9" class="text-center py-4">
                     <i class="fas fa-inbox fa-2x mb-2" style="color: #ccc;"></i>
-                    <p>${changeHistory.length === 0 ? 'История операций пуста' : 'Ничего не найдено'}</p>
+                    <p>История операций пуста</p>
+                </td>
+            </tr>
+        `;
+    } else if (pageHistory.length === 0) {
+        historyList.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center py-4">
+                    <i class="fas fa-search fa-2x mb-2" style="color: #ccc;"></i>
+                    <p>Ничего не найдено</p>
                 </td>
             </tr>
         `;
@@ -1069,17 +1538,29 @@ function renderWriteOffHistory() {
                 categoryDisplay += `<br><span style="color: #999; font-size: 0.85em;">(было ${record.oldCategory})</span>`;
             }
             
+            let operationDisplay = '';
+            if (record.type === 'writeOff') {
+                operationDisplay = getActionBadgeHTML(type, record.reason);
+            } else {
+                operationDisplay = getActionBadgeHTML(type);
+            }
+            
+            let descriptionDisplay = '';
+            if (record.description && record.description !== 'Описание отсутствует') {
+                descriptionDisplay = record.description;
+            }
+            
             return `
                 <tr>
                     <td>${formatDate(record.date)} ${formatTime(record.time)}</td>
                     <td>${codeDisplay}</td>
                     <td>${record.productName || '---'}</td>
                     <td>${categoryDisplay}</td>
-                    <td>${getActionBadgeHTML(type)}</td>
+                    <td>${operationDisplay}</td>
                     <td>${quantityDisplay}</td>
                     <td>${priceDisplay}</td>
                     <td>${totalDisplay}</td>
-                    <td>${record.description || ''}</td>
+                    <td>${descriptionDisplay}</td>
                 </tr>
             `;
         }).join("");
@@ -1139,7 +1620,8 @@ function writeOffNextPage() {
         allHistory = allHistory.filter(function(record) {
             return (record.productName && record.productName.toLowerCase().includes(writeOffSearchFilter)) ||
                    (record.productCode && record.productCode.toLowerCase().includes(writeOffSearchFilter)) ||
-                   (record.description && record.description.toLowerCase().includes(writeOffSearchFilter));
+                   (record.description && record.description.toLowerCase().includes(writeOffSearchFilter)) ||
+                   (record.reason && record.reason.toLowerCase().includes(writeOffSearchFilter));
         });
     }
     
@@ -1192,7 +1674,7 @@ function exportWriteOffHistory() {
         return dateB - dateA;
     });
     
-    let csvContent = "Дата;Время;Тип операции;Код;Название;Категория;Количество;Цена;Сумма;Описание\n";
+    let csvContent = "Дата;Время;Тип операции;Код;Название;Категория;Количество;Цена;Сумма;Причина;Описание\n";
     
     allHistory.forEach(function(record) {
         let typeText = 'Прочее';
@@ -1203,7 +1685,7 @@ function exportWriteOffHistory() {
             case 'writeOff': typeText = 'Списание'; break;
         }
         
-        csvContent += `"${formatDate(record.date)}";"${formatTime(record.time)}";"${typeText}";"${record.productCode || ''}";"${record.productName || ''}";"${record.category || ''}";${record.quantity || 0};${record.price || 0};${record.totalCost || 0};"${record.description || ''}"\n`;
+        csvContent += `"${formatDate(record.date)}";"${formatTime(record.time)}";"${typeText}";"${record.productCode || ''}";"${record.productName || ''}";"${record.category || ''}";${record.quantity || 0};${record.price || 0};${record.totalCost || 0};"${record.reason || ''}";"${record.description || ''}"\n`;
     });
     
     const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1324,6 +1806,17 @@ async function init() {
     
     initWriteOffSelect();
     
+    const categorySelect = getElement("productCategory");
+    categorySelect.addEventListener("change", function() {
+        if (!isEditing) {
+            if (this.value) {
+                getElement("productCode").value = generateProductCode(this.value);
+            } else {
+                getElement("productCode").value = '';
+            }
+        }
+    });
+    
     const writeOffForm = getElement("writeOffForm");
     if (writeOffForm) {
         writeOffForm.addEventListener("submit", writeOffProduct);
@@ -1399,6 +1892,13 @@ async function init() {
     document.addEventListener("keydown", function(event) {
         if (event.key === "Escape") {
             closeWriteOffHistory();
+            closeImportModal();
+        }
+    });
+    
+    window.addEventListener("resize", function() {
+        if (getElement("writeOffHistoryModal").style.display === "block") {
+            renderWriteOffHistory();
         }
     });
     

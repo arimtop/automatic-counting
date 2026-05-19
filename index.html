@@ -43,7 +43,7 @@
 
                 <div class="form-group">
                     <label for="productCode"><i class="fas fa-barcode"></i> Код изделия</label>
-                    <input type="text" id="productCode" required placeholder="Уникальный код">
+                    <input type="text" id="productCode" required placeholder="Уникальный код (автоматически)">
                 </div>
 
                 <div class="form-group">
@@ -258,6 +258,9 @@
                 <button onclick="exportToCSV()" class="btn btn-sm btn-outline-success">
                     <i class="fas fa-file-csv"></i> Экспорт CSV
                 </button>
+                <button onclick="importFromExcel()" class="btn btn-sm btn-outline-info">
+                    <i class="fas fa-file-excel"></i> Импорт накладной
+                </button>
                 <button onclick="clearAllData()" class="btn btn-sm btn-outline-danger">
                     <i class="fas fa-trash-alt"></i> Очистить всё
                 </button>
@@ -269,6 +272,62 @@
     </div>
 </div>
 
+<!-- Модальное окно импорта Excel -->
+<div id="importModal" class="modal" style="display: none;">
+    <div class="modal-content modal-content-large">
+        <div class="card modal-card">
+            <div class="card-header">
+                <h2><i class="fas fa-file-excel" style="color: #10b981;"></i> Импорт накладной из Excel</h2>
+                <div class="modal-header-buttons">
+                    <button onclick="downloadTemplate()" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-download"></i> Скачать шаблон
+                    </button>
+                    <button onclick="confirmImport()" class="btn btn-sm btn-primary" id="confirmImportBtn" disabled>
+                        <i class="fas fa-check"></i> Подтвердить импорт
+                    </button>
+                    <button onclick="closeImportModal()" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-times"></i> Закрыть
+                    </button>
+                </div>
+            </div>
+            
+            <div id="importSummary" class="p-3">
+                <!-- Статистика импорта -->
+            </div>
+            
+            <div class="table-container" style="max-height: 400px; overflow-y: auto; min-height: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Код</th>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th>Кол-во к списанию</th>
+                            <th>В наличии</th>
+                            <th>Причина</th>
+                            <th>Дата</th>
+                            <th>Ошибки</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importPreviewBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-top: 15px;">
+                <h5><i class="fas fa-info-circle"></i> Инструкция по импорту:</h5>
+                <ol style="margin-bottom: 0;">
+                    <li>Скачайте шаблон накладной или создайте свой Excel-файл</li>
+                    <li><strong>Обязательные колонки: Код изделия, Название, Количество, Причина списания, Дата</strong></li>
+                    <li>Поддерживаются форматы: <strong>.xlsx</strong>, <strong>.xls</strong></li>
+                    <li>После загрузки проверьте данные и подтвердите импорт</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно истории операций -->
 <div id="writeOffHistoryModal" class="modal" style="display: none;">
     <div class="modal-content modal-content-large">
         <div class="card modal-card">
@@ -356,6 +415,7 @@
                 <li>HTML5, CSS3, JavaScript</li>
                 <li>Bootstrap 5 для адаптивного дизайна</li>
                 <li>localForage для хранения данных</li>
+                <li>XLSX для импорта Excel-накладных</li>
             </ul>
         </div>
     </div>
@@ -372,8 +432,10 @@
             <h5>Функционал:</h5>
             <ul>
                 <li>CRUD операции с изделиями</li>
+                <li>Автоматическая генерация кодов</li>
                 <li>Поиск и фильтрация</li>
                 <li>Списание товаров</li>
+                <li>Импорт накладных из Excel</li>
                 <li>История всех операций</li>
                 <li>Адаптивный дизайн</li>
             </ul>
@@ -390,6 +452,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="./js/bootstrap.bundle.min.js"></script> 
 <script src="./js/javascript.js"></script>
 </body>
