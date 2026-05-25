@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учёт изделий на предприятии</title>
+    <title>Учёт изделий</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/bootstrap-reboot.min.css">
     <link rel="stylesheet" href="./css/style.css">
@@ -15,8 +15,7 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-sm-12">
-                <h1 class="text-center text-black p-3"><img src="./media/favicon.png" alt="logo" width="80px"> Учёт
-                    изделий на предприятии</h1>
+                <h1 class="text-center text-black p-3"><img src="./media/favicon.png" alt="logo" width="80px"> Учёт изделий на предприятии</h1>
             </div>
         </div>
     </div>
@@ -25,12 +24,10 @@
 <div class="section mt-4 col-11 m-auto">
     <div class="row zagolovok">
         <div class="col-6 text-uppercase mt-3 mb-3">
-            <h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(0, 255, 42);"></i>
-                добавить</h2>
+            <h2 class="dobavka text-center"><i class="fa-solid fa-circle-plus" style="color: rgb(0, 255, 42);"></i> добавить</h2>
         </div>
         <div class="col-6 text-uppercase mt-3 mb-3">
-            <h2 class="history text-center"><i class="fa-solid fa-square-minus" style="color: rgb(229, 39, 39);">
-            </i> Списание товаров</h2>
+            <h2 class="history text-center"><i class="fa-solid fa-square-minus" style="color: rgb(229, 39, 39);"></i> Списание товаров</h2>
         </div>
     </div>
     <div class="row m-0 base">
@@ -40,60 +37,55 @@
                     <label for="productName"><i class="fas fa-tag" style="color: red;"></i> Название изделия</label>
                     <input type="" id="productName" required placeholder="Введите название">
                 </div>
-
                 <div class="form-group">
                     <label for="productCode"><i class="fas fa-barcode"></i> Код изделия</label>
                     <input type="text" id="productCode" required placeholder="Уникальный код (автоматически)">
                 </div>
-
                 <div class="form-group">
-                    <label for="productCategory"><i class="fas fa-folder" style="color: rgb(0, 120, 215);"></i>
-                        Категория</label>
+                    <label for="productCategory"><i class="fas fa-folder" style="color: rgb(0, 120, 215);"></i> Категория</label>
                     <img src="./media/plus.svg" alt="+" class="categoriesAdd" onclick="newCategories()">
                     <select id="productCategory" required>
                         <option value="">Выберите категорию</option>
                     </select>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="productQuantity"><i class="fas fa-cubes" style="color: brown;"></i>
-                            Количество</label>
+                        <label for="productQuantity"><i class="fas fa-cubes" style="color: brown;"></i> Количество</label>
                         <input type="number" id="productQuantity" min="0" value="1" required>
                     </div>
-
                     <div class="form-group">
                         <label for="productPrice"><i class="fas fa-ruble-sign"></i> Цена (руб.)</label>
                         <input type="number" id="productPrice" min="0" step="0.1" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="productDescription"><i class="fas fa-align-left"></i> Описание</label>
                     <textarea id="productDescription" rows="3" placeholder="Описание изделия"></textarea>
                 </div>
-
                 <div class="form-group">
-                    <label for="productLocation"><i class="fas fa-map-marker-alt" style="color: red;"></i> Место
-                        хранения</label>
+                    <label for="productLocation"><i class="fas fa-map-marker-alt" style="color: red;"></i> Место хранения</label>
                     <input type="text" id="productLocation" placeholder="Расположение">
                 </div>
-
                 <div class="form-group">
                     <label><i class="fas fa-calendar-alt" style="color: forestgreen;"></i> Дата поступления</label>
                     <input type="date" id="productDate" required>
                 </div>
-
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Сохранить изделие
                     </button>
-
                     <button type="reset" id="clearForm" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Очистить форму
                     </button>
                 </div>
             </form>
+            <div class="row m-0 mt-3">
+                <div class="col-sm-12 text-center">
+                    <button onclick="importFromExcelAdd()" class="btn btn-sm btn-outline-success mb-3" style="width: 100%;">
+                        <i class="fas fa-file-excel"></i> Импорт накладной (добавление)
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="col-sm-6 right-panel">
@@ -111,14 +103,12 @@
                                     <i class="fas fa-search"></i>
                                     <input type="text" id="productSearchInput" placeholder="Поиск изделия..." onkeyup="filterProducts(this.value)">
                                 </div>
-                                <div class="custom-options" id="writeOffProductOptions">
-                                </div>
+                                <div class="custom-options" id="writeOffProductOptions"></div>
                             </div>
                         </div>
                         <input type="hidden" id="writeOffProduct" name="writeOffProduct">
                     </div>
                 </div>
-
                 <div class="form-group" id="selectedProductInfo" style="display: none;">
                     <div class="card p-3 mb-3 info-card">
                         <h5>Информация об изделии:</h5>
@@ -129,12 +119,10 @@
                         <p><strong>Место хранения:</strong> <span id="infoLocation"></span></p>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="writeOffQuantity"><i class="fas fa-minus-circle" style="color: #dc2626;"></i> Количество для списания</label>
                     <input type="number" id="writeOffQuantity" min="1" value="1" required>
                 </div>
-
                 <div class="form-group">
                     <label for="writeOffReason"><i class="fas fa-comment-alt"></i> Причина списания</label>
                     <select id="writeOffReason" required>
@@ -148,17 +136,14 @@
                         <option value="Другое">Другое</option>
                     </select>
                 </div>
-
                 <div class="form-group" id="otherReasonGroup" style="display: none;">
                     <label for="otherReason"><i class="fas fa-pen"></i> Укажите причину</label>
                     <input type="text" id="otherReason" placeholder="Опишите причину списания">
                 </div>
-
                 <div class="form-group">
                     <label for="writeOffDate"><i class="fas fa-calendar-alt" style="color: forestgreen;"></i> Дата списания</label>
                     <input type="date" id="writeOffDate" required>
                 </div>
-
                 <div class="button-group">
                     <button type="submit" class="btn btn-write-off">
                         <i class="fas fa-minus-circle"></i> Списать изделие
@@ -168,10 +153,16 @@
                     </button>
                 </div>
             </form>
-
             <div class="row m-0 mt-3">
                 <div class="col-sm-12 text-center">
-                    <button onclick="showWriteOffHistory()" class="btn btn-primary btn-audit">
+                    <button onclick="importFromExcel()" class="btn btn-sm btn-outline-danger" style="width: 100%;">
+                        <i class="fas fa-file-excel"></i> Импорт накладной (списание)
+                    </button>
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-sm-12 text-center">
+                    <button onclick="showWriteOffHistory()" class="btn btn-outline-light btn-audit">
                         <i class="fas fa-history"></i> История операций
                     </button>
                 </div>
@@ -210,8 +201,7 @@
                                     <th><i class="fa-regular fa-hand" style="color: burlywood;"></i> Действия</th>
                                 </tr>
                             </thead>
-                            <tbody id="productsList">
-                            </tbody>
+                            <tbody id="productsList"></tbody>
                         </table>
                     </div>
                     <div class="table-footer">
@@ -258,29 +248,27 @@
                 <button onclick="exportToCSV()" class="btn btn-sm btn-outline-success">
                     <i class="fas fa-file-csv"></i> Экспорт CSV
                 </button>
-                <button onclick="importFromExcel()" class="btn btn-sm btn-outline-info">
-                    <i class="fas fa-file-excel"></i> Импорт накладной
-                </button>
+               
                 <button onclick="clearAllData()" class="btn btn-sm btn-outline-danger">
                     <i class="fas fa-trash-alt"></i> Очистить всё
                 </button>
-                <button onclick="generateTestData()" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-magic"></i> Тестовые данные
-                </button>
+                
             </div>
         </div>
     </div>
 </div>
 
-<!-- Модальное окно импорта Excel -->
 <div id="importModal" class="modal" style="display: none;">
     <div class="modal-content modal-content-large">
         <div class="card modal-card">
             <div class="card-header">
-                <h2><i class="fas fa-file-excel" style="color: #10b981;"></i> Импорт накладной из Excel</h2>
+                <h2><i class="fas fa-file-excel" style="color: #10b981;"></i> Импорт накладной</h2>
                 <div class="modal-header-buttons">
-                    <button onclick="downloadTemplate()" class="btn btn-sm btn-outline-success">
-                        <i class="fas fa-download"></i> Скачать шаблон
+                    <button onclick="downloadTemplate()" class="btn btn-sm btn-outline-success" id="btnTemplateAdd">
+                        <i class="fas fa-download"></i> Шаблон накладной (добавление)
+                    </button>
+                    <button onclick="downloadTemplateWriteOff()" class="btn btn-sm btn-outline-info" id="btnTemplateWriteOff">
+                        <i class="fas fa-download"></i> Шаблон накладной (списание)
                     </button>
                     <button onclick="confirmImport()" class="btn btn-sm btn-primary" id="confirmImportBtn" disabled>
                         <i class="fas fa-check"></i> Подтвердить импорт
@@ -290,11 +278,7 @@
                     </button>
                 </div>
             </div>
-            
-            <div id="importSummary" class="p-3">
-                <!-- Статистика импорта -->
-            </div>
-            
+            <div id="importSummary" class="p-3"></div>
             <div class="table-container" style="max-height: 400px; overflow-y: auto; min-height: auto;">
                 <table>
                     <thead>
@@ -302,23 +286,21 @@
                             <th>Код</th>
                             <th>Название</th>
                             <th>Категория</th>
-                            <th>Кол-во к списанию</th>
-                            <th>В наличии</th>
-                            <th>Причина</th>
+                            <th>Кол-во</th>
+                            <th>Цена</th>
+                            <th>Описание</th>
+                            <th>Место</th>
                             <th>Дата</th>
-                            <th>Ошибки</th>
                         </tr>
                     </thead>
-                    <tbody id="importPreviewBody">
-                    </tbody>
+                    <tbody id="importPreviewBody"></tbody>
                 </table>
             </div>
-            
             <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-top: 15px;">
                 <h5><i class="fas fa-info-circle"></i> Инструкция по импорту:</h5>
                 <ol style="margin-bottom: 0;">
                     <li>Скачайте шаблон накладной или создайте свой Excel-файл</li>
-                    <li><strong>Обязательные колонки: Код изделия, Название, Количество, Причина списания, Дата</strong></li>
+                    <li><strong>Обязательные колонки: Код изделия, Название, Категория, Количество, Цена, Дата</strong></li>
                     <li>Поддерживаются форматы: <strong>.xlsx</strong>, <strong>.xls</strong></li>
                     <li>После загрузки проверьте данные и подтвердите импорт</li>
                 </ol>
@@ -327,7 +309,6 @@
     </div>
 </div>
 
-<!-- Модальное окно истории операций -->
 <div id="writeOffHistoryModal" class="modal" style="display: none;">
     <div class="modal-content modal-content-large">
         <div class="card modal-card">
@@ -345,7 +326,6 @@
                     </button>
                 </div>
             </div>
-            
             <div class="controls modal-controls">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
@@ -359,7 +339,6 @@
                     <option value="writeOff">Списание</option>
                 </select>
             </div>
-            
             <div class="table-container modal-table-container">
                 <table>
                     <thead>
@@ -375,18 +354,15 @@
                             <th><i class="fas fa-comment-alt" style="color: lightgray;"></i> Описание</th>
                         </tr>
                     </thead>
-                    <tbody id="writeOffHistoryList">
-                    </tbody>
+                    <tbody id="writeOffHistoryList"></tbody>
                 </table>
             </div>
-            
             <div class="table-footer modal-table-footer">
                 <div class="summary">
                     <strong>Всего списано:</strong>
                     <span id="totalWriteOffQuantity">0</span> шт. на сумму
                     <span id="totalWriteOffValue">0</span> руб.
                 </div>
-                
                 <div class="pagination" id="writeOffPagination">
                     <button id="writeOffPrevPage" class="btn-pagination" onclick="writeOffPrevPage()">
                         <i class="fas fa-chevron-left"></i>
@@ -403,7 +379,6 @@
 
 <footer id="footer" class="footer mt-4">
     <h4 class="text-center mb-5 dp"><i class="fas fa-graduation-cap"></i> Дипломная работа</h4>
-
     <div class="row m-0">
         <div class="col-sm-6">
             <h5>Тема работы:</h5>
@@ -419,15 +394,11 @@
             </ul>
         </div>
     </div>
-
     <div class="row m-0 mt-3">
         <div class="col-sm-6">
             <h5>Выполнил:</h5>
-            <p>Студент группы 322-П<br>
-                Дубровин Никита Романович<br>
-                Специальности 09.02.07 "Информационные системы и программирование"</p>
+            <p>Студент группы 322-П<br>Дубровин Никита Романович<br>Специальности 09.02.07 "Информационные системы и программирование"</p>
         </div>
-
         <div class="col-sm-6">
             <h5>Функционал:</h5>
             <ul>
@@ -441,12 +412,11 @@
             </ul>
         </div>
     </div>
-
     <div class="row mt-3 m-0">
         <div class="contacts col-sm-12 text-center">
             <hr>
-            <p class="mb-1">Защита дипломной работы</p>
-            <p>Ожидаемая оценка: 5</p>
+            <p class="mb-2">Защита дипломной работы</p>
+            
         </div>
     </div>
 </footer>

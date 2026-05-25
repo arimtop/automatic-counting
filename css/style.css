@@ -38,7 +38,7 @@ body {
   border-bottom: 3px solid #0077b6;
   width: 100%;
   margin: auto;
-  background: linear-gradient(to right, #bcb3d0 0%, #06B6D4 100%);
+  background: linear-gradient(to right, #bcb3d0 0%, #06b6d4 100%);
 }
 
 .form-group {
@@ -564,13 +564,34 @@ tbody tr:hover {
   font-weight: 500;
 }
 
-.badge-brak { background: #fee2e2; color: #dc2626; }
-.badge-porcha { background: #fef3c7; color: #d97706; }
-.badge-ustarevanie { background: #e0e7ff; color: #4338ca; }
-.badge-sale { background: #dbeafe; color: #1d4ed8; }
-.badge-peremeshenie { background: #d1fae5; color: #065f46; }
-.badge-inventarizaciya { background: #fce7f3; color: #9d174d; }
-.badge-other { background: #f3f4f6; color: #4b5563; }
+.badge-brak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.badge-porcha {
+  background: #fef3c7;
+  color: #d97706;
+}
+.badge-ustarevanie {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.badge-sale {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.badge-peremeshenie {
+  background: #d1fae5;
+  color: #065f46;
+}
+.badge-inventarizaciya {
+  background: #fce7f3;
+  color: #9d174d;
+}
+.badge-other {
+  background: #f3f4f6;
+  color: #4b5563;
+}
 
 .notification {
   position: fixed;
@@ -589,10 +610,18 @@ tbody tr:hover {
   animation: slideIn 0.3s ease-out;
 }
 
-.notification-info { background: #3b82f6; }
-.notification-success { background: #10b981; }
-.notification-warning { background: #f59e0b; }
-.notification-error { background: #ef4444; }
+.notification-info {
+  background: #3b82f6;
+}
+.notification-success {
+  background: #10b981;
+}
+.notification-warning {
+  background: #f59e0b;
+}
+.notification-error {
+  background: #ef4444;
+}
 
 @keyframes slideIn {
   from {
@@ -617,35 +646,93 @@ tbody tr:hover {
 }
 
 @keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  1% { background-position: 2% 50%; }
-  2% { background-position: 4% 50%; }
-  3% { background-position: 6% 50%; }
-  4% { background-position: 8% 50%; }
-  5% { background-position: 10% 50%; }
-  10% { background-position: 20% 50%; }
-  15% { background-position: 30% 50%; }
-  20% { background-position: 40% 50%; }
-  25% { background-position: 50% 50%; }
-  30% { background-position: 60% 50%; }
-  35% { background-position: 70% 50%; }
-  40% { background-position: 80% 50%; }
-  45% { background-position: 90% 50%; }
-  50% { background-position: 100% 50%; }
-  55% { background-position: 90% 50%; }
-  60% { background-position: 80% 50%; }
-  65% { background-position: 70% 50%; }
-  70% { background-position: 60% 50%; }
-  75% { background-position: 50% 50%; }
-  80% { background-position: 40% 50%; }
-  85% { background-position: 30% 50%; }
-  90% { background-position: 20% 50%; }
-  95% { background-position: 10% 50%; }
-  96% { background-position: 8% 50%; }
-  97% { background-position: 6% 50%; }
-  98% { background-position: 4% 50%; }
-  99% { background-position: 2% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  1% {
+    background-position: 2% 50%;
+  }
+  2% {
+    background-position: 4% 50%;
+  }
+  3% {
+    background-position: 6% 50%;
+  }
+  4% {
+    background-position: 8% 50%;
+  }
+  5% {
+    background-position: 10% 50%;
+  }
+  10% {
+    background-position: 20% 50%;
+  }
+  15% {
+    background-position: 30% 50%;
+  }
+  20% {
+    background-position: 40% 50%;
+  }
+  25% {
+    background-position: 50% 50%;
+  }
+  30% {
+    background-position: 60% 50%;
+  }
+  35% {
+    background-position: 70% 50%;
+  }
+  40% {
+    background-position: 80% 50%;
+  }
+  45% {
+    background-position: 90% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  55% {
+    background-position: 90% 50%;
+  }
+  60% {
+    background-position: 80% 50%;
+  }
+  65% {
+    background-position: 70% 50%;
+  }
+  70% {
+    background-position: 60% 50%;
+  }
+  75% {
+    background-position: 50% 50%;
+  }
+  80% {
+    background-position: 40% 50%;
+  }
+  85% {
+    background-position: 30% 50%;
+  }
+  90% {
+    background-position: 20% 50%;
+  }
+  95% {
+    background-position: 10% 50%;
+  }
+  96% {
+    background-position: 8% 50%;
+  }
+  97% {
+    background-position: 6% 50%;
+  }
+  98% {
+    background-position: 4% 50%;
+  }
+  99% {
+    background-position: 2% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .footer {
@@ -685,7 +772,7 @@ tbody tr:hover {
 
 .modal-card {
   border: none;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -738,13 +825,13 @@ tbody tr:hover {
 }
 
 .modal-table-container table td {
-    padding: 8px 10px;
-    font-size: 13px;
+  padding: 8px 10px;
+  font-size: 13px;
 }
 
 .modal-table-container table th {
-    padding: 8px 10px;
-    font-size: 13px;
+  padding: 8px 10px;
+  font-size: 13px;
 }
 
 /* Фиксируем заголовок таблицы */
@@ -782,7 +869,6 @@ tbody tr:hover {
 }
 
 .btn-audit {
-  background: #8b5cf6;
   margin: auto;
   margin-top: 275px;
 }
@@ -795,8 +881,12 @@ tbody tr:hover {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideDown {
@@ -815,40 +905,40 @@ tbody tr:hover {
     border-right: none;
     border-bottom: 3px solid #0077b6;
   }
-  
+
   .modal-content-large {
     max-width: 100%;
     width: 100%;
     height: 100vh;
     margin: 0;
   }
-  
+
   .modal-card {
     border-radius: 0;
   }
-  
+
   .modal-header-buttons {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .modal-controls {
     flex-direction: column;
   }
-  
+
   .search-box input {
     width: 100%;
   }
-  
+
   .table-footer {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .modal-table-container {
     min-height: 150px;
   }
-  
+
   #writeOffPagination {
     justify-content: center;
   }
